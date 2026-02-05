@@ -67,7 +67,7 @@
             <hr class="my-4">
 
             <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>Leave password fields empty to keep the current password
+                <i class="bi bi-info-circle me-2"></i>Pease Leave password fields empty to keep the current password
             </div>
 
             <div class="mb-3">
