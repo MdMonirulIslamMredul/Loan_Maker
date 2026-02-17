@@ -7,6 +7,10 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\BankAdminController;
 use App\Http\Controllers\BranchAdminController;
 use App\Http\Controllers\LoanApplicationController;
+use App\Http\Controllers\LoanCategoryController;
+use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\LogoSettingController;
+use App\Http\Controllers\AboutSettingController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -14,6 +18,10 @@ Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/all-loans', [HomeController::class, 'allLoans'])->name('loans.all');
 Route::get('/all-banks', [HomeController::class, 'allBanks'])->name('banks.all');
 Route::get('/loans/{loan}', [HomeController::class, 'show'])->name('loans.show');
+Route::get('/about-us', [AboutSettingController::class, 'show'])->name('about');
+Route::get('/services', function () {
+    return view('services');
+})->name('services');
 Route::get('/loans/{loan}/apply', [LoanApplicationController::class, 'create'])->name('loans.apply');
 Route::post('/loans/{loan}/apply', [LoanApplicationController::class, 'store'])->name('loans.apply.store');
 
@@ -63,6 +71,31 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
     Route::get('/loans/{loan}/edit', [SuperAdminController::class, 'editLoan'])->name('super-admin.loans.edit');
     Route::put('/loans/{loan}', [SuperAdminController::class, 'updateLoan'])->name('super-admin.loans.update');
     Route::delete('/loans/{loan}', [SuperAdminController::class, 'destroyLoan'])->name('super-admin.loans.destroy');
+
+    // Loan Category Management
+    Route::get('/loan-categories', [LoanCategoryController::class, 'index'])->name('super-admin.loan-categories.index');
+    Route::get('/loan-categories/create', [LoanCategoryController::class, 'create'])->name('super-admin.loan-categories.create');
+    Route::post('/loan-categories', [LoanCategoryController::class, 'store'])->name('super-admin.loan-categories.store');
+    Route::get('/loan-categories/{loanCategory}/edit', [LoanCategoryController::class, 'edit'])->name('super-admin.loan-categories.edit');
+    Route::put('/loan-categories/{loanCategory}', [LoanCategoryController::class, 'update'])->name('super-admin.loan-categories.update');
+    Route::delete('/loan-categories/{loanCategory}', [LoanCategoryController::class, 'destroy'])->name('super-admin.loan-categories.destroy');
+
+    // Testimonials Management
+    Route::get('/testimonials', [TestimonialController::class, 'index'])->name('super-admin.testimonials.index');
+    Route::get('/testimonials/create', [TestimonialController::class, 'create'])->name('super-admin.testimonials.create');
+    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('super-admin.testimonials.store');
+    Route::get('/testimonials/{testimonial}/edit', [TestimonialController::class, 'edit'])->name('super-admin.testimonials.edit');
+    Route::put('/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('super-admin.testimonials.update');
+    Route::delete('/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('super-admin.testimonials.destroy');
+
+    // Logo Settings
+    Route::get('/logo-settings', [LogoSettingController::class, 'index'])->name('super-admin.logo-settings.index');
+    Route::put('/logo-settings', [LogoSettingController::class, 'update'])->name('super-admin.logo-settings.update');
+    Route::delete('/logo-settings/{type}', [LogoSettingController::class, 'deleteLogo'])->name('super-admin.logo-settings.delete');
+
+    // About Settings
+    Route::get('/about-settings', [AboutSettingController::class, 'index'])->name('super-admin.about-settings.index');
+    Route::put('/about-settings', [AboutSettingController::class, 'update'])->name('super-admin.about-settings.update');
 
     // Loan Applications Management
     Route::get('/applications', [LoanApplicationController::class, 'index'])->name('super-admin.applications.index');

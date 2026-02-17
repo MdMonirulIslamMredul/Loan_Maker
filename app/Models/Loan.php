@@ -16,6 +16,7 @@ class Loan extends Model
      */
     protected $fillable = [
         'branch_id',
+        'category_id',
         'name',
         'description',
         'details1',
@@ -56,5 +57,13 @@ class Loan extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * Get the category that the loan belongs to.
+     */
+    public function category()
+    {
+        return $this->belongsTo(LoanCategory::class, 'category_id');
     }
 }

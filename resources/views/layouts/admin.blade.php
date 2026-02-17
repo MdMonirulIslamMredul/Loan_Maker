@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,7 @@
             height: 100vh;
             width: 260px;
             background: #ffffff;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             z-index: 1000;
             transition: transform 0.3s ease;
@@ -77,7 +78,7 @@
 
         .top-navbar {
             background: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             position: sticky;
             top: 0;
             z-index: 999;
@@ -107,6 +108,7 @@
     </style>
     @stack('styles')
 </head>
+
 <body class="bg-light">
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -117,61 +119,98 @@
 
         <div class="sidebar-menu">
             <div class="menu-section-title">Main</div>
-            <a href="{{ route('super-admin.dashboard') }}" class="menu-item {{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.dashboard') }}"
+                class="menu-item {{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
             </a>
 
             <div class="menu-section-title">Banks Management</div>
-            <a href="{{ route('super-admin.banks.create') }}" class="menu-item {{ request()->routeIs('super-admin.banks.create') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.banks.create') }}"
+                class="menu-item {{ request()->routeIs('super-admin.banks.create') ? 'active' : '' }}">
                 <i class="bi bi-building"></i>
                 <span>Create Bank</span>
             </a>
-            <a href="{{ route('super-admin.banks.index') }}" class="menu-item {{ request()->routeIs('super-admin.banks.index') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.banks.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.banks.index') ? 'active' : '' }}">
                 <i class="bi bi-bank"></i>
                 <span>View All Banks</span>
             </a>
-            <a href="{{ route('super-admin.bank-admins.create') }}" class="menu-item {{ request()->routeIs('super-admin.bank-admins.create') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.bank-admins.create') }}"
+                class="menu-item {{ request()->routeIs('super-admin.bank-admins.create') ? 'active' : '' }}">
                 <i class="bi bi-person-badge"></i>
                 <span>Create Bank Admin</span>
             </a>
-            <a href="{{ route('super-admin.bank-admins.index') }}" class="menu-item {{ request()->routeIs('super-admin.bank-admins.index') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.bank-admins.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.bank-admins.index') ? 'active' : '' }}">
                 <i class="bi bi-people"></i>
                 <span>View Bank Admins</span>
             </a>
 
             <div class="menu-section-title">Branches Management</div>
-            <a href="{{ route('super-admin.branches.create') }}" class="menu-item {{ request()->routeIs('super-admin.branches.create') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.branches.create') }}"
+                class="menu-item {{ request()->routeIs('super-admin.branches.create') ? 'active' : '' }}">
                 <i class="bi bi-shop"></i>
                 <span>Create Branch</span>
             </a>
-            <a href="{{ route('super-admin.branches.index') }}" class="menu-item {{ request()->routeIs('super-admin.branches.index') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.branches.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.branches.index') ? 'active' : '' }}">
                 <i class="bi bi-diagram-3"></i>
                 <span>View All Branches</span>
             </a>
-            <a href="{{ route('super-admin.branch-admins.create') }}" class="menu-item {{ request()->routeIs('super-admin.branch-admins.create') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.branch-admins.create') }}"
+                class="menu-item {{ request()->routeIs('super-admin.branch-admins.create') ? 'active' : '' }}">
                 <i class="bi bi-person-plus"></i>
                 <span>Create Branch Admin</span>
             </a>
-            <a href="{{ route('super-admin.branch-admins.index') }}" class="menu-item {{ request()->routeIs('super-admin.branch-admins.index') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.branch-admins.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.branch-admins.index') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i>
                 <span>View Branch Admins</span>
             </a>
 
             <div class="menu-section-title">Loans Management</div>
-            <a href="{{ route('super-admin.loans.create') }}" class="menu-item {{ request()->routeIs('super-admin.loans.create') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.loans.create') }}"
+                class="menu-item {{ request()->routeIs('super-admin.loans.create') ? 'active' : '' }}">
                 <i class="bi bi-cash-coin"></i>
                 <span>Create Loan</span>
             </a>
-            <a href="{{ route('super-admin.loans.index') }}" class="menu-item {{ request()->routeIs('super-admin.loans.index') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.loans.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.loans.index') ? 'active' : '' }}">
                 <i class="bi bi-list-ul"></i>
                 <span>View All Loans</span>
             </a>
 
+            <a href="{{ route('super-admin.loan-categories.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.loan-categories.*') ? 'active' : '' }}">
+                <i class="bi bi-tags"></i>
+                <span>Loan Categories</span>
+            </a>
+
             <div class="menu-section-title">Applications</div>
-            <a href="{{ route('super-admin.applications.index') }}" class="menu-item {{ request()->routeIs('super-admin.applications.index') ? 'active' : '' }}">
+            <a href="{{ route('super-admin.applications.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.applications.index') ? 'active' : '' }}">
                 <i class="bi bi-file-text"></i>
                 <span>Loan Applications</span>
+            </a>
+
+            <div class="menu-section-title">Content</div>
+            <a href="{{ route('super-admin.testimonials.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.testimonials.*') ? 'active' : '' }}">
+                <i class="bi bi-chat-quote"></i>
+                <span>Testimonials</span>
+            </a>
+
+            <div class="menu-section-title">Site Settings</div>
+            <a href="{{ route('super-admin.logo-settings.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.logo-settings.*') ? 'active' : '' }}">
+                <i class="bi bi-image"></i>
+                <span>Logo Settings</span>
+            </a>
+            <a href="{{ route('super-admin.about-settings.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.about-settings.*') ? 'active' : '' }}">
+                <i class="bi bi-info-circle"></i>
+                <span>About Settings</span>
             </a>
         </div>
     </div>
@@ -242,4 +281,5 @@
     </script>
     @stack('scripts')
 </body>
+
 </html>

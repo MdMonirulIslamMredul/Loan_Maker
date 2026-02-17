@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Loan;
+use App\Models\LoanCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -367,7 +368,7 @@ class SuperAdminController extends Controller
      */
     public function listLoans()
     {
-        $loans = Loan::with('branch.bank')->orderBy('created_at', 'desc')->get();
+        $loans = Loan::with('branch.bank', 'category')->orderBy('created_at', 'desc')->get();
         return view('super-admin.loans.index', compact('loans'));
     }
 
@@ -377,7 +378,8 @@ class SuperAdminController extends Controller
     public function createLoan()
     {
         $branches = Branch::with('bank')->get();
-        return view('super-admin.loans.create', compact('branches'));
+        $categories = LoanCategory::where('is_active', true)->orderBy('name')->get();
+        return view('super-admin.loans.create', compact('branches', 'categories'));
     }
 
     /**
@@ -387,6 +389,7 @@ class SuperAdminController extends Controller
     {
         $validated = $request->validate([
             'branch_id' => 'required|exists:branches,id',
+            'category_id' => 'nullable|exists:loan_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'details1' => 'nullable|string',
@@ -395,11 +398,13 @@ class SuperAdminController extends Controller
             'details4' => 'nullable|string',
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'interest_rate' => 'nullable|numeric|min:0|max:100',
+            'processing_fee' => 'nullable|numeric|min:0|max:100',
             'min_amount' => 'nullable|numeric|min:0',
             'max_amount' => 'nullable|numeric|min:0',
             'min_tenure_months' => 'nullable|integer|min:1',
             'max_tenure_months' => 'nullable|integer|min:1',
             'eligibility' => 'nullable|string',
+            'features' => 'nullable|string',
             'documents_required' => 'nullable|string',
         ]);
 
@@ -424,7 +429,8 @@ class SuperAdminController extends Controller
     public function editLoan(Loan $loan)
     {
         $branches = Branch::with('bank')->get();
-        return view('super-admin.loans.edit', compact('loan', 'branches'));
+        $categories = LoanCategory::where('is_active', true)->orderBy('name')->get();
+        return view('super-admin.loans.edit', compact('loan', 'branches', 'categories'));
     }
 
     /**
@@ -434,6 +440,7 @@ class SuperAdminController extends Controller
     {
         $validated = $request->validate([
             'branch_id' => 'required|exists:branches,id',
+            'category_id' => 'nullable|exists:loan_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'details1' => 'nullable|string',
@@ -442,11 +449,13 @@ class SuperAdminController extends Controller
             'details4' => 'nullable|string',
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'interest_rate' => 'nullable|numeric|min:0|max:100',
+            'processing_fee' => 'nullable|numeric|min:0|max:100',
             'min_amount' => 'nullable|numeric|min:0',
             'max_amount' => 'nullable|numeric|min:0',
             'min_tenure_months' => 'nullable|integer|min:1',
             'max_tenure_months' => 'nullable|integer|min:1',
             'eligibility' => 'nullable|string',
+            'features' => 'nullable|string',
             'documents_required' => 'nullable|string',
         ]);
 

@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Models\LogoSetting;
+use App\Models\AboutSetting;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Share logo settings with all views
+        View::composer('*', function ($view) {
+            $view->with('logoSettings', LogoSetting::settings());
+            $view->with('aboutSettings', AboutSetting::settings());
+        });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
+use App\Models\LoanCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,15 @@ class BranchAdminController extends Controller
         $branch = $user->branch;
         $bank = $user->bank;
 
-        return view('branch-admin.dashboard', compact('branch', 'bank'));
+        // Get loan applications for this branch's loans
+        $applications = \App\Models\LoanApplication::whereHas('loan', function($query) use ($user) {
+                $query->where('branch_id', $user->branch_id);
+            })
+            ->with(['loan'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
+        return view('branch-admin.dashboard', compact('branch', 'bank', 'applications'));
     }
 
     /**
@@ -26,7 +35,7 @@ class BranchAdminController extends Controller
     public function indexLoans()
     {
         $branchId = Auth::user()->branch_id;
-        $loans = Loan::where('branch_id', $branchId)
+        $loans = Loan::with('category')->where('branch_id', $branchId)
                      ->orderBy('created_at', 'desc')
                      ->get();
 
@@ -38,7 +47,8 @@ class BranchAdminController extends Controller
      */
     public function createLoan()
     {
-        return view('branch-admin.loans.create');
+        $categories = LoanCategory::where('is_active', true)->orderBy('name')->get();
+        return view('branch-admin.loans.create', compact('categories'));
     }
 
     /**
@@ -47,6 +57,7 @@ class BranchAdminController extends Controller
     public function storeLoan(Request $request)
     {
         $validated = $request->validate([
+            'category_id' => 'nullable|exists:loan_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'details1' => 'nullable|string',
@@ -55,11 +66,13 @@ class BranchAdminController extends Controller
             'details4' => 'nullable|string',
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'interest_rate' => 'nullable|numeric|min:0|max:100',
+            'processing_fee' => 'nullable|numeric|min:0|max:100',
             'min_amount' => 'nullable|numeric|min:0',
             'max_amount' => 'nullable|numeric|min:0',
             'min_tenure_months' => 'nullable|integer|min:1',
             'max_tenure_months' => 'nullable|integer|min:1',
             'eligibility' => 'nullable|string',
+            'features' => 'nullable|string',
             'documents_required' => 'nullable|string',
         ]);
 
@@ -89,7 +102,8 @@ class BranchAdminController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        return view('branch-admin.loans.edit', compact('loan'));
+        $categories = LoanCategory::where('is_active', true)->orderBy('name')->get();
+        return view('branch-admin.loans.edit', compact('loan', 'categories'));
     }
 
     /**
@@ -103,6 +117,7 @@ class BranchAdminController extends Controller
         }
 
         $validated = $request->validate([
+            'category_id' => 'nullable|exists:loan_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'details1' => 'nullable|string',
@@ -111,11 +126,13 @@ class BranchAdminController extends Controller
             'details4' => 'nullable|string',
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'interest_rate' => 'nullable|numeric|min:0|max:100',
+            'processing_fee' => 'nullable|numeric|min:0|max:100',
             'min_amount' => 'nullable|numeric|min:0',
             'max_amount' => 'nullable|numeric|min:0',
             'min_tenure_months' => 'nullable|integer|min:1',
             'max_tenure_months' => 'nullable|integer|min:1',
             'eligibility' => 'nullable|string',
+            'features' => 'nullable|string',
             'documents_required' => 'nullable|string',
         ]);
 

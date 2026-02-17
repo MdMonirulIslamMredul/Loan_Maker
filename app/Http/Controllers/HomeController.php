@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bank;
 use App\Models\Loan;
+use App\Models\Testimonial;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -22,7 +23,7 @@ class HomeController extends Controller
 
         // Get featured loans (latest active loans)
         $featuredLoans = Loan::where('is_active', true)
-            ->with(['branch.bank'])
+            ->with(['branch.bank', 'category'])
             ->latest()
             ->take(6)
             ->get();
@@ -30,12 +31,18 @@ class HomeController extends Controller
         // Get all active loans for banners
         $bannerLoans = Loan::where('is_active', true)
             ->whereNotNull('banner')
-            ->with(['branch.bank'])
+            ->with(['branch.bank', 'category'])
             ->latest()
             ->take(5)
             ->get();
 
-        return view('home', compact('banks', 'featuredLoans', 'bannerLoans'));
+        // Get active testimonials
+        $testimonials = Testimonial::where('is_active', true)
+            ->orderBy('display_order')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('home', compact('banks', 'featuredLoans', 'bannerLoans', 'testimonials'));
     }
 
     /**
@@ -52,9 +59,12 @@ class HomeController extends Controller
                     ->orWhere('details1', 'like', '%' . $query . '%')
                     ->orWhereHas('branch.bank', function($subQuery) use ($query) {
                         $subQuery->where('name', 'like', '%' . $query . '%');
+                    })
+                    ->orWhereHas('category', function($subQuery) use ($query) {
+                        $subQuery->where('name', 'like', '%' . $query . '%');
                     });
             })
-            ->with(['branch.bank'])
+            ->with(['branch.bank', 'category'])
             ->paginate(12);
 
         return view('search-results', compact('loans', 'query'));
@@ -66,6 +76,7 @@ class HomeController extends Controller
     public function allLoans(Request $request)
     {
         $bankId = $request->input('bank');
+        $categoryId = $request->input('category');
         $loanName = $request->input('loan_name');
 
         // Get all active banks for filter dropdown
@@ -73,15 +84,25 @@ class HomeController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Get all active loan categories for filter dropdown
+        $categories = \App\Models\LoanCategory::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
         // Build query
         $loansQuery = Loan::where('is_active', true)
-            ->with(['branch.bank']);
+            ->with(['branch.bank', 'category']);
 
         // Apply bank filter
         if ($bankId) {
             $loansQuery->whereHas('branch.bank', function($query) use ($bankId) {
                 $query->where('id', $bankId);
             });
+        }
+
+        // Apply category filter
+        if ($categoryId) {
+            $loansQuery->where('category_id', $categoryId);
         }
 
         // Apply loan name filter
@@ -91,7 +112,7 @@ class HomeController extends Controller
 
         $loans = $loansQuery->latest()->paginate(12);
 
-        return view('all-loans', compact('loans', 'banks', 'bankId', 'loanName'));
+        return view('all-loans', compact('loans', 'banks', 'categories', 'bankId', 'categoryId', 'loanName'));
     }
 
     /**
@@ -116,7 +137,7 @@ class HomeController extends Controller
     public function show(Loan $loan)
     {
         // Load relationships
-        $loan->load(['branch.bank']);
+        $loan->load(['branch.bank', 'category']);
 
         return view('loan-details', compact('loan'));
     }
