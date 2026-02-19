@@ -54,6 +54,11 @@ class LoanApplicationController extends Controller
         $validated['documents'] = $documentPaths;
         $validated['status'] = 'pending';
 
+        // Attach the authenticated customer if available
+        if (auth()->check()) {
+            $validated['customer_id'] = auth()->id();
+        }
+
         LoanApplication::create($validated);
 
         return redirect()->route('loans.show', $loan)->with('success', 'Your loan application has been submitted successfully! We will contact you soon.');
@@ -136,4 +141,3 @@ class LoanApplicationController extends Controller
         return redirect()->back()->with('success', 'Application status updated successfully!');
     }
 }
-

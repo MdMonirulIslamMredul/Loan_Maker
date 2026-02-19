@@ -187,11 +187,17 @@
                 <span>Loan Categories</span>
             </a>
 
-            <div class="menu-section-title">Applications</div>
+            <div class="menu-section-title">Customer Applications</div>
             <a href="{{ route('super-admin.applications.index') }}"
                 class="menu-item {{ request()->routeIs('super-admin.applications.index') ? 'active' : '' }}">
                 <i class="bi bi-file-text"></i>
                 <span>Loan Applications</span>
+            </a>
+
+            <a href="{{ route('super-admin.customer-messages.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.customer-messages.index') ? 'active' : '' }}">
+                <i class="bi bi-chat-dots"></i>
+                <span>Customer Messages</span>
             </a>
 
             <div class="menu-section-title">Content</div>

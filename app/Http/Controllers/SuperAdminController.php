@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\Loan;
 use App\Models\LoanCategory;
 use App\Models\User;
+use App\Models\CustomerMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -383,6 +384,40 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Display customer messages for admin.
+     */
+    public function customerMessages()
+    {
+        $messages = CustomerMessage::orderBy('created_at', 'desc')->paginate(15);
+        return view('super-admin.customer_messages.index', compact('messages'));
+    }
+
+    /**
+     * Show a single customer message.
+     */
+    public function showCustomerMessage(CustomerMessage $message)
+    {
+        // mark as read when opened
+        if (! $message->is_read) {
+            $message->is_read = true;
+            $message->save();
+        }
+
+        return view('super-admin.customer_messages.show', compact('message'));
+    }
+
+    /**
+     * Toggle message read status
+     */
+    public function markMessageRead(Request $request, CustomerMessage $message)
+    {
+        $message->is_read = ! $message->is_read;
+        $message->save();
+
+        return back()->with('success', 'Message status updated.');
+    }
+
+    /**
      * Store a newly created loan in storage.
      */
     public function storeLoan(Request $request)
@@ -420,7 +455,7 @@ class SuperAdminController extends Controller
         Loan::create($validated);
 
         return redirect()->route('super-admin.loans.index')
-                         ->with('success', 'Loan created successfully.');
+            ->with('success', 'Loan created successfully.');
     }
 
     /**
@@ -476,7 +511,7 @@ class SuperAdminController extends Controller
         $loan->update($validated);
 
         return redirect()->route('super-admin.loans.index')
-                         ->with('success', 'Loan updated successfully.');
+            ->with('success', 'Loan updated successfully.');
     }
 
     /**
@@ -492,6 +527,6 @@ class SuperAdminController extends Controller
         $loan->delete();
 
         return redirect()->route('super-admin.loans.index')
-                         ->with('success', 'Loan deleted successfully.');
+            ->with('success', 'Loan deleted successfully.');
     }
 }

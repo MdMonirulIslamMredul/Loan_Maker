@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',
         'bank_id',
         'branch_id',
+        'phone',
     ];
 
     /**
@@ -87,5 +88,13 @@ class User extends Authenticatable
     public function isBranchAdmin(): bool
     {
         return $this->role === 'branch_admin';
+    }
+
+    /**
+     * Check if user is customer.
+     */
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
     }
 }

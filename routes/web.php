@@ -11,6 +11,7 @@ use App\Http\Controllers\LoanCategoryController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\LogoSettingController;
 use App\Http\Controllers\AboutSettingController;
+use App\Http\Controllers\Auth\CustomerRegisterController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -19,16 +20,28 @@ Route::get('/all-loans', [HomeController::class, 'allLoans'])->name('loans.all')
 Route::get('/all-banks', [HomeController::class, 'allBanks'])->name('banks.all');
 Route::get('/loans/{loan}', [HomeController::class, 'show'])->name('loans.show');
 Route::get('/about-us', [AboutSettingController::class, 'show'])->name('about');
+Route::get('/contact-us', [AboutSettingController::class, 'contact'])->name('contact');
+Route::post('/contact-us', [AboutSettingController::class, 'submitContact'])->name('contact.send');
+
+// Legal / static pages
+Route::view('/privacy-policy', 'privacy_policy')->name('pages.privacy_policy');
+Route::view('/terms-conditions', 'terms')->name('pages.terms');
+
+
 Route::get('/services', function () {
     return view('services');
 })->name('services');
-Route::get('/loans/{loan}/apply', [LoanApplicationController::class, 'create'])->name('loans.apply');
-Route::post('/loans/{loan}/apply', [LoanApplicationController::class, 'store'])->name('loans.apply.store');
+Route::get('/loans/{loan}/apply', [LoanApplicationController::class, 'create'])->name('loans.apply')->middleware('auth');
+Route::post('/loans/{loan}/apply', [LoanApplicationController::class, 'store'])->name('loans.apply.store')->middleware('auth');
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Customer Registration (simple)
+Route::get('/register-customer', [CustomerRegisterController::class, 'showRegistrationForm'])->name('register.customer');
+Route::post('/register-customer', [CustomerRegisterController::class, 'register'])->name('register.customer.submit');
 
 // Super Admin Routes
 Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(function () {
@@ -101,6 +114,10 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
     Route::get('/applications', [LoanApplicationController::class, 'index'])->name('super-admin.applications.index');
     Route::get('/applications/{application}', [LoanApplicationController::class, 'show'])->name('super-admin.applications.show');
     Route::post('/applications/{application}/status', [LoanApplicationController::class, 'updateStatus'])->name('super-admin.applications.updateStatus');
+    // Customer Messages Management
+    Route::get('/customer-messages', [SuperAdminController::class, 'customerMessages'])->name('super-admin.customer-messages.index');
+    Route::get('/customer-messages/{message}', [SuperAdminController::class, 'showCustomerMessage'])->name('super-admin.customer-messages.show');
+    Route::post('/customer-messages/{message}/mark-read', [SuperAdminController::class, 'markMessageRead'])->name('super-admin.customer-messages.markRead');
 });
 
 // Bank Admin Routes
@@ -137,4 +154,12 @@ Route::middleware(['auth', 'branch.admin'])->prefix('branch-admin')->group(funct
     Route::get('/applications', [LoanApplicationController::class, 'branchApplications'])->name('branch-admin.applications.index');
     Route::get('/applications/{application}', [LoanApplicationController::class, 'branch_show'])->name('branch-admin.applications.show');
     Route::post('/applications/{application}/status', [LoanApplicationController::class, 'updateStatus'])->name('branch-admin.applications.updateStatus');
+});
+
+// Customer Routes
+Route::middleware(['auth', 'customer'])->prefix('customer')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Customer\CustomerController::class, 'index'])->name('customer.dashboard');
+    Route::get('/profile', [App\Http\Controllers\Customer\CustomerController::class, 'profile'])->name('customer.profile');
+    Route::get('/applications', [App\Http\Controllers\Customer\CustomerController::class, 'applications'])->name('customer.applications');
+    // additional customer panel routes can be added here under App\Http\Controllers\Customer namespace
 });

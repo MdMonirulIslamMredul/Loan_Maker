@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class LoanApplication extends Model
 {
     protected $fillable = [
+        'customer_id',
         'loan_id',
         'full_name',
         'email',
@@ -36,5 +37,10 @@ class LoanApplication extends Model
     public function loan()
     {
         return $this->belongsTo(Loan::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
     }
 }

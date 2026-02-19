@@ -37,6 +37,8 @@ class AuthController extends Controller
                 return redirect()->intended('/bank-admin/dashboard');
             } elseif ($user->isBranchAdmin()) {
                 return redirect()->intended('/branch-admin/dashboard');
+            } elseif (method_exists($user, 'isCustomer') && $user->isCustomer()) {
+                return redirect()->intended('/customer/dashboard');
             }
         }
 

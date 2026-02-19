@@ -108,6 +108,17 @@
         </div>
     </section>
 
+
+    <!-- CTA Buttons -->
+    <div class="container text-center my-4">
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ route('register.customer') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-person-plus-fill me-2"></i>Register as a Customer
+            </a>
+        </div>
+    </div>
+
+
     <!-- Featured Loans Section -->
     @if ($featuredLoans->count() > 0)
         <section id="loans" class="py-5 bg-light">

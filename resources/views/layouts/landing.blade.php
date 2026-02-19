@@ -55,22 +55,28 @@
                         <li class="nav-item">
                             <a class="nav-link fw-medium" href="/">Home</a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href=  "{{ route('banks.all') }}">Banks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-medium" href= "{{ route('loans.all') }}">Loans</a>
+                            <a class="nav-link fw-medium" href="{{ route('about') }}">About Us</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link fw-medium" href="{{ route('services') }}">Services</a>
                         </li>
+
+
+                        {{-- <li class="nav-item">
+                            <a class="nav-link fw-medium" href=  "{{ route('banks.all') }}">Banks</a>
+                        </li> --}}
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="{{ route('about') }}">About Us</a>
+                            <a class="nav-link fw-medium" href= "{{ route('loans.all') }}">Loans</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-medium" href= "{{ route('contact') }}">Contact Us</a>
                         </li>
 
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link fw-medium" href="{{ url('/dashboard') }}">Dashboard</a>
+                                <a class="nav-link fw-medium" href="{{ url('customer/dashboard') }}">Dashboard</a>
                             </li>
                             <li class="nav-item ms-lg-2">
                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
@@ -218,10 +224,26 @@
             </div>
 
             <div class="border-top border-secondary mt-4 pt-4 text-center">
-                <p class="mb-0 text-white-50">&copy; {{ date('Y') }} {{ $logoSettings->site_name }}. All rights
-                    reserved. | <a href="#" class="text-white-50 text-decoration-none hover-link">Privacy
-                        Policy</a> | <a href="#" class="text-white-50 text-decoration-none hover-link">Terms of
-                        Service</a></p>
+                <p class="mb-1 text-white-50">Loan Linker &copy; 2025. All Rights Reserved.</p>
+                <p class="mb-0 text-white-50">
+                    <a href="{{ route('search') }}?q=personal"
+                        class="text-white-50 text-decoration-none hover-link">Personal Loan</a>
+                    &nbsp;|&nbsp;
+                    <a href="{{ route('search') }}?q=sme" class="text-white-50 text-decoration-none hover-link">SME
+                        Loan</a>
+                    &nbsp;|&nbsp;
+                    <a href="{{ route('search') }}?q=credit-card"
+                        class="text-white-50 text-decoration-none hover-link">Credit Card</a>
+                    &nbsp;|&nbsp;
+                    <a href="#" class="text-white-50 text-decoration-none hover-link">Bank Officer
+                        Registration</a>
+                    &nbsp;|&nbsp;
+                    <a href="{{ route('pages.privacy_policy') }}"
+                        class="text-white-50 text-decoration-none hover-link">Privacy Policy</a>
+                    &nbsp;|&nbsp;
+                    <a href="{{ route('pages.terms') }}" class="text-white-50 text-decoration-none hover-link">Terms
+                        &amp; Conditions</a>
+                </p>
             </div>
         </div>
     </footer>

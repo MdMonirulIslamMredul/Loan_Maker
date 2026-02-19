@@ -98,6 +98,19 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label for="working_hours" class="form-label">Working Hours</label>
+                                    <input type="text" class="form-control @error('working_hours') is-invalid @enderror"
+                                        id="working_hours" name="working_hours"
+                                        value="{{ old('working_hours', $settings->working_hours) }}"
+                                        placeholder="e.g. Monday - Saturday, 09:00 AM to 06:00 PM">
+                                    <small class="form-text text-muted">Human-readable working hours for display on contact
+                                        page.</small>
+                                    @error('working_hours')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label for="contact_whatsapp" class="form-label">WhatsApp Number</label>
                                     <input type="text"
                                         class="form-control @error('contact_whatsapp') is-invalid @enderror"
