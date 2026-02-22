@@ -110,6 +110,8 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
     Route::get('/about-settings', [AboutSettingController::class, 'index'])->name('super-admin.about-settings.index');
     Route::put('/about-settings', [AboutSettingController::class, 'update'])->name('super-admin.about-settings.update');
 
+
+
     // Loan Applications Management
     Route::get('/applications', [LoanApplicationController::class, 'index'])->name('super-admin.applications.index');
     Route::get('/applications/{application}', [LoanApplicationController::class, 'show'])->name('super-admin.applications.show');
@@ -121,6 +123,16 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
 });
 
 // Bank Admin Routes
+// API: Get branches for a bank (used by super-admin filters)
+Route::get('/api/banks/{bank}/branches', function (App\Models\Bank $bank) {
+    $branches = App\Models\Branch::where('bank_id', $bank->id)
+        ->where('is_active', 1)
+        ->select('id', 'name', 'code')
+        ->get();
+
+    return response()->json($branches);
+})->name('api.bank.branches');
+
 Route::middleware(['auth', 'bank.admin'])->prefix('bank-admin')->group(function () {
     Route::get('/dashboard', [BankAdminController::class, 'dashboard'])->name('bank-admin.dashboard');
 
@@ -136,6 +148,21 @@ Route::middleware(['auth', 'bank.admin'])->prefix('bank-admin')->group(function 
     Route::get('/branch-admins', [BankAdminController::class, 'listBranchAdmins'])->name('bank-admin.branch-admins.index');
     Route::get('/branch-admins/create', [BankAdminController::class, 'createBranchAdmin'])->name('bank-admin.branch-admins.create');
     Route::post('/branch-admins', [BankAdminController::class, 'storeBranchAdmin'])->name('bank-admin.branch-admins.store');
+    Route::get('/branch-admins/{user}/edit', [BankAdminController::class, 'editBranchAdmin'])->name('bank-admin.branch-admins.edit');
+    Route::put('/branch-admins/{user}', [BankAdminController::class, 'updateBranchAdmin'])->name('bank-admin.branch-admins.update');
+
+    // Loan Management (bank-wide across branches)
+    Route::get('/loans', [App\Http\Controllers\BankAdminController::class, 'indexLoans'])->name('bank-admin.loans.index');
+    Route::get('/loans/create', [App\Http\Controllers\BankAdminController::class, 'createLoan'])->name('bank-admin.loans.create');
+    Route::post('/loans', [App\Http\Controllers\BankAdminController::class, 'storeLoan'])->name('bank-admin.loans.store');
+    Route::get('/loans/{loan}/edit', [App\Http\Controllers\BankAdminController::class, 'editLoan'])->name('bank-admin.loans.edit');
+    Route::put('/loans/{loan}', [App\Http\Controllers\BankAdminController::class, 'updateLoan'])->name('bank-admin.loans.update');
+    Route::delete('/loans/{loan}', [App\Http\Controllers\BankAdminController::class, 'destroyLoan'])->name('bank-admin.loans.destroy');
+
+    // Loan Applications Management (bank-level)
+    Route::get('/applications', [App\Http\Controllers\BankAdminController::class, 'applications'])->name('bank-admin.applications.index');
+    Route::get('/applications/{application}', [App\Http\Controllers\BankAdminController::class, 'showApplication'])->name('bank-admin.applications.show');
+    Route::post('/applications/{application}/status', [App\Http\Controllers\BankAdminController::class, 'updateApplicationStatus'])->name('bank-admin.applications.updateStatus');
 });
 
 // Branch Admin Routes
@@ -160,6 +187,10 @@ Route::middleware(['auth', 'branch.admin'])->prefix('branch-admin')->group(funct
 Route::middleware(['auth', 'customer'])->prefix('customer')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Customer\CustomerController::class, 'index'])->name('customer.dashboard');
     Route::get('/profile', [App\Http\Controllers\Customer\CustomerController::class, 'profile'])->name('customer.profile');
+    Route::get('/profile/edit', [App\Http\Controllers\Customer\CustomerController::class, 'editProfile'])->name('customer.profile.edit');
+    Route::get('/profile/password', [App\Http\Controllers\Customer\CustomerController::class, 'editPassword'])->name('customer.profile.password.edit');
+    Route::put('/profile', [App\Http\Controllers\Customer\CustomerController::class, 'updateProfile'])->name('customer.profile.update');
+    Route::put('/profile/password', [App\Http\Controllers\Customer\CustomerController::class, 'updatePassword'])->name('customer.profile.password');
     Route::get('/applications', [App\Http\Controllers\Customer\CustomerController::class, 'applications'])->name('customer.applications');
     // additional customer panel routes can be added here under App\Http\Controllers\Customer namespace
 });

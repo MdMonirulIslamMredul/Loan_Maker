@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use App\Models\LoanApplication;
+use App\Models\User;
 
 class CustomerController extends Controller
 {
@@ -58,6 +61,34 @@ class CustomerController extends Controller
     }
 
     /**
+     * Show edit profile form.
+     */
+    public function editProfile()
+    {
+        $user = auth()->user();
+
+        if (!$user || ($user->role ?? '') !== 'customer') {
+            abort(403, 'Unauthorized.');
+        }
+
+        return view('customer.edit-profile', compact('user'));
+    }
+
+    /**
+     * Show change password form.
+     */
+    public function editPassword()
+    {
+        $user = auth()->user();
+
+        if (!$user || ($user->role ?? '') !== 'customer') {
+            abort(403, 'Unauthorized.');
+        }
+
+        return view('customer.change-password', compact('user'));
+    }
+
+    /**
      * List customer's loan applications.
      */
     public function applications(Request $request)
@@ -74,5 +105,54 @@ class CustomerController extends Controller
             ->paginate(15);
 
         return view('customer.applications', compact('applications'));
+    }
+
+    /**
+     * Update customer profile (name, email, phone).
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        if (!$user || ($user->role ?? '') !== 'customer') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:30'],
+        ]);
+
+        $user->fill($data);
+        $user->save();
+
+        return redirect()->route('customer.profile')->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Change customer password.
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = auth()->user();
+
+        if (!$user || ($user->role ?? '') !== 'customer') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $user->password = Hash::make($data['password']);
+        $user->save();
+
+        return redirect()->route('customer.profile')->with('success', 'Password changed successfully.');
     }
 }

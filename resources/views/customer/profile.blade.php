@@ -1,6 +1,16 @@
 @extends('layouts.customer')
 
 @section('customer-content')
+    <div class="mt-4">
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <a href="{{ route('customer.profile.edit') }}" class="btn btn-primary me-2">Edit Profile</a>
+        <a href="{{ route('customer.profile.password.edit') }}" class="btn btn-warning">Change Password</a>
+    </div>
+
+
     <div class="card">
         <div class="card-body">
             <h4 class="mb-4">Your Profile</h4>

@@ -76,7 +76,19 @@
 
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link fw-medium" href="{{ url('customer/dashboard') }}">Dashboard</a>
+                                @php $role = auth()->user()->role; @endphp
+                                @if ($role === 'customer')
+                                    <a class="nav-link fw-medium" href="{{ url('customer/dashboard') }}">Dashboard</a>
+                                @elseif ($role === 'super_admin')
+                                    <a class="nav-link fw-medium" href="{{ route('super-admin.dashboard') }}">Dashboard</a>
+                                @elseif ($role === 'branch_admin')
+                                    <a class="nav-link fw-medium"
+                                        href="{{ route('branch-admin.dashboard') }}">Dashboard</a>
+                                @elseif ($role === 'bank_admin')
+                                    <a class="nav-link fw-medium" href="{{ route('bank-admin.dashboard') }}">Dashboard</a>
+                                @else
+                                    <a class="nav-link fw-medium" href="{{ url('/') }}">Dashboard</a>
+                                @endif
                             </li>
                             <li class="nav-item ms-lg-2">
                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">

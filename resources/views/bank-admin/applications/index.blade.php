@@ -1,11 +1,11 @@
-@extends('layouts.branch-admin')
+@extends('layouts.bank-admin')
 
 @section('content')
     <div class="container-fluid py-4">
         <div class="row mb-4">
             <div class="col-md-6">
                 <h2><i class="bi bi-file-text me-2"></i>Loan Applications</h2>
-                <p class="text-muted">Manage loan applications for your branch</p>
+                <p class="text-muted">Manage loan applications for your bank</p>
             </div>
         </div>
 
@@ -19,7 +19,7 @@
         <!-- Filter Section -->
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body">
-                <form method="GET" action="{{ route('branch-admin.applications.index') }}" class="row g-3">
+                <form method="GET" action="{{ route('bank-admin.applications.index') }}" class="row g-3">
                     <div class="col-md-3">
                         <label for="status" class="form-label">Status</label>
                         <select name="status" id="status" class="form-select">
@@ -35,12 +35,13 @@
                     </div>
 
                     <div class="col-md-3">
-                        <label for="loan_id" class="form-label">Loan Name:</label>
-                        <select name="loan_id" id="loan_id" class="form-select">
-                            <option value="">Any Loan</option>
-                            @foreach ($loans as $loan)
-                                <option value="{{ $loan->id }}" {{ request('loan_id') == $loan->id ? 'selected' : '' }}>
-                                    {{ $loan->name }}</option>
+                        <label for="branch_id" class="form-label">Branch</label>
+                        <select name="branch_id" id="branch_id" class="form-select">
+                            <option value="">Any Branch</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                    {{ request('branch_id') == $branch->id ? 'selected' : '' }}>{{ $branch->name }}
+                                    ({{ $branch->code }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -75,7 +76,7 @@
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="bi bi-filter me-2"></i>Filter
                         </button>
-                        <a href="{{ route('branch-admin.applications.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('bank-admin.applications.index') }}" class="btn btn-secondary">
                             <i class="bi bi-x-circle me-2"></i>Clear
                         </a>
                     </div>
@@ -124,7 +125,7 @@
                                         </td>
                                         <td>{{ $application->created_at->format('d M, Y') }}</td>
                                         <td>
-                                            <a href="{{ route('branch-admin.applications.show', $application) }}"
+                                            <a href="{{ route('bank-admin.applications.show', $application) }}"
                                                 class="btn btn-sm btn-primary">
                                                 <i class="bi bi-eye me-1"></i>View
                                             </a>

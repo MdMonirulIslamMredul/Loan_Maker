@@ -50,7 +50,7 @@
                             <div class="mt-3">
                                 @if (!empty($app->admin_notes))
                                     <p><strong>Admin Notes:</strong></p>
-                                    <div class="alert alert-info">
+                                    <div class="alert alert-warning text-dark">
                                         {!! nl2br(e($app->admin_notes)) !!}
                                     </div>
                                 @else

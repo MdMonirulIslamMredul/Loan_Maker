@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use App\Models\LoanApplication;
+use App\Models\Bank;
+use App\Models\Branch;
+use App\Models\LoanCategory;
 use Illuminate\Http\Request;
 
 class LoanApplicationController extends Controller
@@ -83,9 +86,47 @@ class LoanApplicationController extends Controller
             });
         }
 
+        // Filter by bank
+        if ($request->filled('bank_id')) {
+            $bankId = $request->bank_id;
+            $query->whereHas('loan', function ($q) use ($bankId) {
+                $q->whereHas('branch', function ($q2) use ($bankId) {
+                    $q2->where('bank_id', $bankId);
+                });
+            });
+        }
+
+        // Filter by branch
+        if ($request->filled('branch_id')) {
+            $query->whereHas('loan', function ($q) use ($request) {
+                $q->where('branch_id', $request->branch_id);
+            });
+        }
+
+        // Filter by category
+        if ($request->filled('category_id')) {
+            $query->whereHas('loan', function ($q) use ($request) {
+                $q->where('category_id', $request->category_id);
+            });
+        }
+
+        // Date range filters
+        if ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+
         $applications = $query->paginate(15);
 
-        return view('super-admin.applications.index', compact('applications'));
+        // Provide filter lists
+        $banks = Bank::orderBy('name')->get();
+        $branches = Branch::orderBy('name')->get();
+        $categories = LoanCategory::where('is_active', true)->orderBy('name')->get();
+
+        return view('super-admin.applications.index', compact('applications', 'banks', 'branches', 'categories'));
     }
 
     /**
@@ -106,9 +147,35 @@ class LoanApplicationController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Filter by loan (specific loan)
+        if ($request->filled('loan_id')) {
+            $query->where('loan_id', $request->loan_id);
+        }
+
+        // Filter by category
+        if ($request->filled('category_id')) {
+            $categoryId = $request->category_id;
+            $query->whereHas('loan', function ($q) use ($categoryId) {
+                $q->where('category_id', $categoryId);
+            });
+        }
+
+        // Filter by date range
+        if ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+
         $applications = $query->paginate(15);
 
-        return view('branch-admin.applications.index', compact('applications'));
+        // Provide loans and categories for filters
+        $loans = Loan::where('branch_id', $branchId)->get();
+        $categories = LoanCategory::where('is_active', true)->get();
+
+        return view('branch-admin.applications.index', compact('applications', 'loans', 'categories'));
     }
 
     public function branch_show(LoanApplication $application)
