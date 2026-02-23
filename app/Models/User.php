@@ -25,6 +25,7 @@ class User extends Authenticatable
         'bank_id',
         'branch_id',
         'phone',
+        'lead_balance',
     ];
 
     /**
@@ -96,5 +97,15 @@ class User extends Authenticatable
     public function isCustomer(): bool
     {
         return $this->role === 'customer';
+    }
+
+    public function leadAccesses()
+    {
+        return $this->hasMany(LeadAccess::class, 'officer_id');
+    }
+
+    public function packageOrders()
+    {
+        return $this->hasMany(PackageOrder::class);
     }
 }

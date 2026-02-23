@@ -19,9 +19,10 @@ class BranchAdminController extends Controller
         $bank = $user->bank;
 
         // Get loan applications for this branch's loans
-        $applications = \App\Models\LoanApplication::whereHas('loan', function($query) use ($user) {
-                $query->where('branch_id', $user->branch_id);
-            })
+        $applications = \App\Models\LoanApplication::whereHas('loan', function ($query) use ($user) {
+            $query->where('branch_id', $user->branch_id)
+                ->where('branch_admin_id', $user->id);
+        })
             ->with(['loan'])
             ->orderBy('created_at', 'desc')
             ->paginate(5);
@@ -35,9 +36,11 @@ class BranchAdminController extends Controller
     public function indexLoans()
     {
         $branchId = Auth::user()->branch_id;
-        $loans = Loan::with('category')->where('branch_id', $branchId)
-                     ->orderBy('created_at', 'desc')
-                     ->get();
+        $loans = Loan::with('category')
+            ->where('branch_id', $branchId)
+            ->where('branch_admin_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('branch-admin.loans.index', compact('loans'));
     }
@@ -84,12 +87,13 @@ class BranchAdminController extends Controller
         }
 
         $validated['branch_id'] = Auth::user()->branch_id;
+        $validated['branch_admin_id'] = Auth::id();
         $validated['is_active'] = $request->has('is_active');
 
         Loan::create($validated);
 
         return redirect()->route('branch-admin.loans.index')
-                         ->with('success', 'Loan created successfully.');
+            ->with('success', 'Loan created successfully.');
     }
 
     /**
@@ -153,7 +157,7 @@ class BranchAdminController extends Controller
         $loan->update($validated);
 
         return redirect()->route('branch-admin.loans.index')
-                         ->with('success', 'Loan updated successfully.');
+            ->with('success', 'Loan updated successfully.');
     }
 
     /**
@@ -174,6 +178,6 @@ class BranchAdminController extends Controller
         $loan->delete();
 
         return redirect()->route('branch-admin.loans.index')
-                         ->with('success', 'Loan deleted successfully.');
+            ->with('success', 'Loan deleted successfully.');
     }
 }

@@ -16,6 +16,7 @@ class Loan extends Model
      */
     protected $fillable = [
         'branch_id',
+        'branch_admin_id',
         'category_id',
         'name',
         'description',
@@ -57,6 +58,14 @@ class Loan extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * Get the branch admin (user) who created the loan.
+     */
+    public function branchAdmin()
+    {
+        return $this->belongsTo(User::class, 'branch_admin_id');
     }
 
     /**

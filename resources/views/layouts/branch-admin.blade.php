@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,7 @@
             height: 100vh;
             width: 260px;
             background: #ffffff;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             z-index: 1000;
             transition: transform 0.3s ease;
@@ -77,7 +78,7 @@
 
         .top-navbar {
             background: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             position: sticky;
             top: 0;
             z-index: 999;
@@ -107,6 +108,7 @@
     </style>
     @stack('styles')
 </head>
+
 <body class="bg-light">
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -117,25 +119,43 @@
 
         <div class="sidebar-menu">
             <div class="menu-section-title">Main</div>
-            <a href="{{ route('branch-admin.dashboard') }}" class="menu-item {{ request()->routeIs('branch-admin.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('branch-admin.dashboard') }}"
+                class="menu-item {{ request()->routeIs('branch-admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
             </a>
 
             <div class="menu-section-title">Loans Management</div>
-            <a href="{{ route('branch-admin.loans.index') }}" class="menu-item {{ request()->routeIs('branch-admin.loans.index') ? 'active' : '' }}">
+            <a href="{{ route('branch-admin.loans.index') }}"
+                class="menu-item {{ request()->routeIs('branch-admin.loans.index') ? 'active' : '' }}">
                 <i class="bi bi-list-ul"></i>
                 <span>Manage Loans</span>
             </a>
-            <a href="{{ route('branch-admin.loans.create') }}" class="menu-item {{ request()->routeIs('branch-admin.loans.create') ? 'active' : '' }}">
+            <a href="{{ route('branch-admin.loans.create') }}"
+                class="menu-item {{ request()->routeIs('branch-admin.loans.create') ? 'active' : '' }}">
                 <i class="bi bi-plus-circle"></i>
                 <span>Add New Loan</span>
             </a>
 
             <div class="menu-section-title">Applications</div>
-            <a href="{{ route('branch-admin.applications.index') }}" class="menu-item {{ request()->routeIs('branch-admin.applications.index') ? 'active' : '' }}">
+
+            <a href="{{ route('branch-admin.applications.index') }}"
+                class="menu-item {{ request()->routeIs('branch-admin.applications.index') ? 'active' : '' }}">
                 <i class="bi bi-file-text"></i>
-                <span>Loan Applications</span>
+                <span>All Loan Applications</span>
+            </a>
+
+
+            <div class="menu-section-title">Packages</div>
+            <a href="{{ route('branch-admin.packages.gallery') }}"
+                class="menu-item {{ request()->routeIs('branch-admin.packages.*') ? 'active' : '' }}">
+                <i class="bi bi-box-seam"></i>
+                <span>Lead Packages</span>
+            </a>
+            <a href="{{ route('branch-admin.packages.history') }}"
+                class="menu-item {{ request()->routeIs('branch-admin.packages.history') ? 'active' : '' }}">
+                <i class="bi bi-clock-history"></i>
+                <span>Purchase History</span>
             </a>
         </div>
     </div>
@@ -206,4 +226,5 @@
     </script>
     @stack('scripts')
 </body>
+
 </html>

@@ -27,21 +27,49 @@
 
                 <div class="row g-3">
                     <div class="row g-3">
-                        <!-- Branch Selection (Required) -->
-                        <div class="col-12">
-                            <label class="form-label">
-                                Branch <span class="text-danger">*</span>
-                            </label>
-                            <select name="branch_id" required class="form-select">
-                                <option value="">Select Branch</option>
-                                @foreach ($branches as $branch)
-                                    <option value="{{ $branch->id }}"
-                                        {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
-                                        {{ $branch->bank->name }} - {{ $branch->name }}
+
+                        <!-- Bank Selection (Required) -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Bank <span class="text-danger">*</span></label>
+                            <select name="bank_id" id="bank_select" required class="form-select">
+                                <option value="">Select Bank</option>
+                                @foreach ($banks as $bank)
+                                    <option value="{{ $bank->id }}" {{ old('bank_id') == $bank->id ? 'selected' : '' }}>
+                                        {{ $bank->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
+
+                        <!-- Branch Selection (Required) -->
+                        <div class="col-md-4">
+                            <label class="form-label">Branch <span class="text-danger">*</span></label>
+                            <select name="branch_id" id="branch_select" required class="form-select">
+                                <option value="">Select Branch</option>
+                                @if (old('bank_id') && old('branch_id'))
+                                    {{-- If old values exist, preload the branches for the old bank server-side to preserve selection --}}
+                                    @foreach ($branches->where('bank_id', old('bank_id')) as $branch)
+                                        <option value="{{ $branch->id }}"
+                                            {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                            {{ $branch->bank->name }} - {{ $branch->name }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Branch Admin / Officer <span class="text-danger">*</span></label>
+                            <select name="branch_admin_id" id="branch_admin_select" required class="form-select">
+                                <option value="">Select Branch Admin</option>
+                                @if (old('branch_id') && old('branch_admin_id'))
+                                    {{-- preload admin if validation failed and values exist --}}
+                                    {{-- admins will be populated by JS on page load as well --}}
+                                @endif
+                            </select>
+                        </div>
+
+
 
                         <!-- Loan Name (Required) -->
                         <div class="col-12">
@@ -189,3 +217,86 @@
         </div>
     </div>
 @endsection
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bankSelect = document.getElementById('bank_select');
+        const branchSelect = document.getElementById('branch_select');
+        const adminSelect = document.getElementById('branch_admin_select');
+
+        async function loadBranches(bankId, preselectedBranch) {
+            branchSelect.innerHTML = '<option>Loading...</option>';
+            adminSelect.innerHTML = '<option value="">Select Branch Admin</option>';
+            if (!bankId) {
+                branchSelect.innerHTML = '<option value="">Select Branch</option>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`{{ url('/api/banks') }}/${bankId}/branches`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (!res.ok) throw new Error('Network error');
+                const data = await res.json();
+                let html = '<option value="">Select Branch</option>';
+                data.forEach(b => {
+                    const selected = preselectedBranch && preselectedBranch == b.id ? ' selected' :
+                        '';
+                    const code = b.code ? ' (' + b.code + ')' : '';
+                    html += `<option value="${b.id}"${selected}>${b.name}${code}</option>`;
+                });
+                branchSelect.innerHTML = html;
+            } catch (e) {
+                branchSelect.innerHTML = '<option value="">Select Branch</option>';
+            }
+        }
+
+        async function loadAdmins(branchId, preselectedAdmin) {
+            adminSelect.innerHTML = '<option>Loading...</option>';
+            if (!branchId) {
+                adminSelect.innerHTML = '<option value="">Select Branch Admin</option>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/branches/${branchId}/admins`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (!res.ok) throw new Error('Network error');
+                const data = await res.json();
+                let html = '<option value="">Select Branch Admin</option>';
+                data.forEach(admin => {
+                    const selected = preselectedAdmin && preselectedAdmin == admin.id ?
+                        ' selected' : '';
+                    html += `<option value="${admin.id}"${selected}>${admin.name}</option>`;
+                });
+                adminSelect.innerHTML = html;
+            } catch (e) {
+                adminSelect.innerHTML = '<option value="">Select Branch Admin</option>';
+            }
+        }
+
+        bankSelect?.addEventListener('change', function() {
+            loadBranches(this.value);
+        });
+
+        branchSelect?.addEventListener('change', function() {
+            loadAdmins(this.value);
+        });
+
+        // On page load, if old values exist, populate selects accordingly
+        const initialBank = '{{ old('bank_id') }}';
+        const initialBranch = '{{ old('branch_id') }}';
+        const initialAdmin = '{{ old('branch_admin_id') }}';
+        if (initialBank) {
+            loadBranches(initialBank, initialBranch).then(() => {
+                if (initialBranch) loadAdmins(initialBranch, initialAdmin);
+            });
+        }
+    });
+</script>

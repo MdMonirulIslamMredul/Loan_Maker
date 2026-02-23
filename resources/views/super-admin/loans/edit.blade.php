@@ -27,20 +27,44 @@
                 @method('PUT')
 
                 <div class="row g-3">
-                    <!-- Branch Selection (Required) -->
+                    <!-- Branch (read-only) -->
                     <div class="col-12">
-                        <label class="form-label">
-                            Branch <span class="text-danger">*</span>
-                        </label>
-                        <select name="branch_id" required class="form-select">
-                            <option value="">Select Branch</option>
-                            @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}"
-                                    {{ old('branch_id', $loan->branch_id) == $branch->id ? 'selected' : '' }}>
-                                    {{ $branch->bank->name }} - {{ $branch->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label class="form-label">Branch</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold">{{ $loan->branch->name }}</div>
+                                <div class="small text-muted">{{ $loan->branch->bank->name }}@if ($loan->branch->code)
+                                        · {{ $loan->branch->code }}
+                                    @endif
+                                </div>
+                            </div>
+
+                        </div>
+                        <input type="hidden" name="branch_id" value="{{ $loan->branch_id }}">
+                    </div>
+
+                    <!-- Branch Admin (read-only) -->
+                    <div class="col-12">
+                        <label class="form-label">Branch Admin / Officer</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
+                                style="width:40px;height:40px;">
+                                @if ($loan->branchAdmin && $loan->branchAdmin->name)
+                                    {{ strtoupper(substr($loan->branchAdmin->name, 0, 1)) }}
+                                @else
+                                    N
+                                @endif
+                            </div>
+                            <div>
+                                @if ($loan->branchAdmin)
+                                    <div class="fw-bold">{{ $loan->branchAdmin->name }}</div>
+                                    <div class="small text-muted">{{ $loan->branchAdmin->email ?? '—' }}</div>
+                                @else
+                                    <div class="fw-bold">N/A</div>
+                                @endif
+                            </div>
+                        </div>
+                        <input type="hidden" name="branch_admin_id" value="{{ $loan->branch_admin_id }}">
                     </div>
 
                     <!-- Loan Name (Required) -->

@@ -378,9 +378,10 @@ class SuperAdminController extends Controller
      */
     public function createLoan()
     {
+        $banks = Bank::where('is_active', true)->orderBy('name')->get();
         $branches = Branch::with('bank')->get();
         $categories = LoanCategory::where('is_active', true)->orderBy('name')->get();
-        return view('super-admin.loans.create', compact('branches', 'categories'));
+        return view('super-admin.loans.create', compact('banks', 'branches', 'categories'));
     }
 
     /**

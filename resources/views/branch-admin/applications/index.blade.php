@@ -16,6 +16,25 @@
             </div>
         @endif
 
+        @php
+            $user = auth()->user();
+            $hasAnyLeads = false;
+            if ($user->isSuperAdmin() || $user->isBankAdmin() || $user->isBranchAdmin()) {
+                $hasAnyLeads = true;
+            } else {
+                $hasAnyLeads =
+                    (int) ($user->lead_balance ?? 0) > 0 ||
+                    \App\Models\LeadAccess::where('officer_id', $user->id)->exists();
+            }
+        @endphp
+
+        @unless ($hasAnyLeads)
+            <div class="alert alert-info">
+                You don't have any purchased leads. <a href="{{ route('branch-admin.packages.gallery') }}"
+                    class="alert-link">Purchase a package</a> to view applicant contact details.
+            </div>
+        @endunless
+
         <!-- Filter Section -->
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body">
@@ -57,7 +76,15 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                        <label for="access" class="form-label">Access</label>
+                        <select name="access" id="access" class="form-select">
+                            <option value="">Any</option>
+                            <option value="unlocked" {{ request('access') == 'unlocked' ? 'selected' : '' }}>Unlocked
+                            </option>
+                            <option value="locked" {{ request('access') == 'locked' ? 'selected' : '' }}>Locked</option>
+                        </select>
+                    </div>
 
                     <div class="col-md-3">
                         <label for="from_date" class="form-label">From Date</label>
@@ -124,10 +151,41 @@
                                         </td>
                                         <td>{{ $application->created_at->format('d M, Y') }}</td>
                                         <td>
-                                            <a href="{{ route('branch-admin.applications.show', $application) }}"
-                                                class="btn btn-sm btn-primary">
-                                                <i class="bi bi-eye me-1"></i>View
-                                            </a>
+                                            @php
+                                                $canView = false;
+                                                if ($user->isSuperAdmin() || $user->isBankAdmin()) {
+                                                    $canView = true;
+                                                } else {
+                                                    // direct view only if previously unlocked for this officer
+                                                    $canView = \App\Models\LeadAccess::where('officer_id', $user->id)
+                                                        ->where('application_id', $application->id)
+                                                        ->exists();
+                                                }
+                                            @endphp
+
+                                            @if ($canView)
+                                                <a href="{{ route('branch-admin.applications.show', $application) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-eye me-1"></i>View
+                                                </a>
+                                            @else
+                                                @if ((int) ($user->lead_balance ?? 0) > 0)
+                                                    <form
+                                                        action="{{ route('branch-admin.applications.unlock', $application) }}"
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-unlock me-1"></i>Unlock to View (1)
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <a href="{{ route('branch-admin.packages.gallery') }}"
+                                                        class="btn btn-sm btn-outline-secondary"
+                                                        title="Purchase leads to view">
+                                                        <i class="bi bi-cart me-1"></i>Buy Leads
+                                                    </a>
+                                                @endif
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

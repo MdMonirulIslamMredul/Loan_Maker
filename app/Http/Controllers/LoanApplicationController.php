@@ -7,6 +7,7 @@ use App\Models\LoanApplication;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\LoanCategory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class LoanApplicationController extends Controller
@@ -138,7 +139,8 @@ class LoanApplicationController extends Controller
 
         $query = LoanApplication::with(['loan.branch.bank'])
             ->whereHas('loan', function ($q) use ($branchId) {
-                $q->where('branch_id', $branchId);
+                $q->where('branch_id', $branchId)
+                    ->where('branch_admin_id', auth()->id());
             })
             ->latest();
 
@@ -169,10 +171,34 @@ class LoanApplicationController extends Controller
             $query->whereDate('created_at', '<=', $request->to_date);
         }
 
+        // Filter by access (locked/unlocked) for branch officers
+        if ($request->filled('access')) {
+            $access = $request->access;
+            $userId = auth()->id();
+
+            if ($access === 'unlocked') {
+                $query->whereExists(function ($q) use ($userId) {
+                    $q->select(DB::raw(1))
+                        ->from('lead_accesses')
+                        ->whereColumn('lead_accesses.application_id', 'loan_applications.id')
+                        ->where('lead_accesses.officer_id', $userId);
+                });
+            } elseif ($access === 'locked') {
+                $query->whereNotExists(function ($q) use ($userId) {
+                    $q->select(DB::raw(1))
+                        ->from('lead_accesses')
+                        ->whereColumn('lead_accesses.application_id', 'loan_applications.id')
+                        ->where('lead_accesses.officer_id', $userId);
+                });
+            }
+        }
+
         $applications = $query->paginate(15);
 
         // Provide loans and categories for filters
-        $loans = Loan::where('branch_id', $branchId)->get();
+        $loans = Loan::where('branch_id', $branchId)
+            ->where('branch_admin_id', auth()->id())
+            ->get();
         $categories = LoanCategory::where('is_active', true)->get();
 
         return view('branch-admin.applications.index', compact('applications', 'loans', 'categories'));
@@ -181,6 +207,23 @@ class LoanApplicationController extends Controller
     public function branch_show(LoanApplication $application)
     {
         $application->load(['loan.branch.bank']);
+
+        $user = auth()->user();
+        // super-admin and bank-admin can always view
+        if ($user->isSuperAdmin() || $user->isBankAdmin()) {
+            return view('branch-admin.applications.show', compact('application'));
+        }
+
+        // check lead access for officer
+        $hasAccess = \App\Models\LeadAccess::where('officer_id', $user->id)
+            ->where('application_id', $application->id)
+            ->exists();
+
+        if (! $hasAccess) {
+            return redirect()->route('branch-admin.applications.index')
+                ->with('error', 'You do not have access to view this application. Purchase or unlock the lead first.');
+        }
+
         return view('branch-admin.applications.show', compact('application'));
     }
 

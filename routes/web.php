@@ -11,6 +11,10 @@ use App\Http\Controllers\LoanCategoryController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\LogoSettingController;
 use App\Http\Controllers\AboutSettingController;
+use App\Http\Controllers\LeadPackageController;
+use App\Http\Controllers\PackageOrderController;
+use App\Http\Controllers\OfficerPurchaseController;
+use App\Http\Controllers\LeadAccessController;
 use App\Http\Controllers\Auth\CustomerRegisterController;
 
 // Public Routes
@@ -101,6 +105,18 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
     Route::put('/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('super-admin.testimonials.update');
     Route::delete('/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('super-admin.testimonials.destroy');
 
+    // Lead Packages Management
+    Route::get('/lead-packages', [LeadPackageController::class, 'index'])->name('super-admin.lead-packages.index');
+    Route::get('/lead-packages/create', [LeadPackageController::class, 'create'])->name('super-admin.lead-packages.create');
+    Route::post('/lead-packages', [LeadPackageController::class, 'store'])->name('super-admin.lead-packages.store');
+    Route::get('/lead-packages/{leadPackage}/edit', [LeadPackageController::class, 'edit'])->name('super-admin.lead-packages.edit');
+    Route::put('/lead-packages/{leadPackage}', [LeadPackageController::class, 'update'])->name('super-admin.lead-packages.update');
+    Route::delete('/lead-packages/{leadPackage}', [LeadPackageController::class, 'destroy'])->name('super-admin.lead-packages.destroy');
+
+    // Package Orders / Approvals
+    Route::get('/package-orders', [PackageOrderController::class, 'index'])->name('super-admin.package-orders.index');
+    Route::post('/package-orders/{order}/approve', [PackageOrderController::class, 'approve'])->name('super-admin.package-orders.approve');
+
     // Logo Settings
     Route::get('/logo-settings', [LogoSettingController::class, 'index'])->name('super-admin.logo-settings.index');
     Route::put('/logo-settings', [LogoSettingController::class, 'update'])->name('super-admin.logo-settings.update');
@@ -133,6 +149,17 @@ Route::get('/api/banks/{bank}/branches', function (App\Models\Bank $bank) {
     return response()->json($branches);
 })->name('api.bank.branches');
 
+// API: Get branch-admin users for a branch
+Route::get('/api/branches/{branch}/admins', function (App\Models\Branch $branch) {
+    $admins = App\Models\User::where('branch_id', $branch->id)
+        ->where('role', 'branch_admin')
+        ->where('is_active', 1)
+        ->select('id', 'name')
+        ->get();
+
+    return response()->json($admins);
+})->name('api.branch.admins');
+
 Route::middleware(['auth', 'bank.admin'])->prefix('bank-admin')->group(function () {
     Route::get('/dashboard', [BankAdminController::class, 'dashboard'])->name('bank-admin.dashboard');
 
@@ -163,6 +190,16 @@ Route::middleware(['auth', 'bank.admin'])->prefix('bank-admin')->group(function 
     Route::get('/applications', [App\Http\Controllers\BankAdminController::class, 'applications'])->name('bank-admin.applications.index');
     Route::get('/applications/{application}', [App\Http\Controllers\BankAdminController::class, 'showApplication'])->name('bank-admin.applications.show');
     Route::post('/applications/{application}/status', [App\Http\Controllers\BankAdminController::class, 'updateApplicationStatus'])->name('bank-admin.applications.updateStatus');
+});
+
+// Officer / Branch Admin package gallery & purchase
+Route::middleware(['auth', 'branch.admin'])->prefix('branch-admin')->group(function () {
+    Route::get('/packages', [OfficerPurchaseController::class, 'gallery'])->name('branch-admin.packages.gallery');
+    Route::post('/packages/{leadPackage}/purchase', [OfficerPurchaseController::class, 'purchase'])->name('branch-admin.packages.purchase');
+
+    // Unlock lead for a specific application
+    Route::post('/applications/{application}/unlock', [LeadAccessController::class, 'unlock'])->name('branch-admin.applications.unlock');
+    Route::get('/packages/history', [OfficerPurchaseController::class, 'history'])->name('branch-admin.packages.history');
 });
 
 // Branch Admin Routes

@@ -187,6 +187,24 @@
                 <span>Loan Categories</span>
             </a>
 
+
+            <div class="menu-section-title">Lead Packages</div>
+            <a href="{{ route('super-admin.lead-packages.create') }}"
+                class="menu-item {{ request()->routeIs('super-admin.lead-packages.create') ? 'active' : '' }}">
+                <i class="bi bi-plus-circle"></i>
+                <span>Create Lead Package</span>
+            </a>
+            <a href="{{ route('super-admin.lead-packages.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.lead-packages.*') ? 'active' : '' }}">
+                <i class="bi bi-box-seam"></i>
+                <span>Lead Packages</span>
+            </a>
+            <a href="{{ route('super-admin.package-orders.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.package-orders.*') ? 'active' : '' }}">
+                <i class="bi bi-card-checklist"></i>
+                <span>Package Orders</span>
+            </a>
+
             <div class="menu-section-title">Customer Applications</div>
             <a href="{{ route('super-admin.applications.index') }}"
                 class="menu-item {{ request()->routeIs('super-admin.applications.index') ? 'active' : '' }}">

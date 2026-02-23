@@ -124,7 +124,7 @@
                                 <th>Tenure</th>
                                 <th>Status</th>
                                 <th>Applied Date</th>
-                                <th>Actions</th>
+                                {{-- <th>Actions</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -154,12 +154,12 @@
                                     <td class="text-muted small">
                                         {{ $application->created_at->format('M d, Y') }}
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <a href="{{ route('branch-admin.applications.show', $application) }}"
                                             class="btn btn-sm btn-outline-primary" title="View Details">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>
