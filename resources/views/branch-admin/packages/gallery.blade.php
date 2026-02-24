@@ -21,10 +21,8 @@
                             <p class="text-muted small">{{ Str::limit($package->description, 80) }}</p>
                         </div>
                         <div class="card-footer bg-white">
-                            <form action="{{ route('branch-admin.packages.purchase', $package) }}" method="POST">
-                                @csrf
-                                <button class="btn btn-primary w-100">Buy Now</button>
-                            </form>
+                            <a href="{{ route('branch-admin.packages.purchase.form', $package) }}"
+                                class="btn btn-primary w-100">Buy Now</a>
                         </div>
                     </div>
                 </div>

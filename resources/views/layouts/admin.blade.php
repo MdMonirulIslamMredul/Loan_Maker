@@ -195,7 +195,7 @@
                 <span>Create Lead Package</span>
             </a>
             <a href="{{ route('super-admin.lead-packages.index') }}"
-                class="menu-item {{ request()->routeIs('super-admin.lead-packages.*') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('super-admin.lead-packages.index') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i>
                 <span>Lead Packages</span>
             </a>

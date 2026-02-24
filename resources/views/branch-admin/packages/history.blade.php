@@ -11,6 +11,37 @@
 
         <div class="card border-0 shadow-sm">
             <div class="card-body">
+                <form method="GET" class="row g-2 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Package</label>
+                        <select name="package_id" class="form-select">
+                            <option value="">All Packages</option>
+                            @foreach ($packages ?? [] as $pkg)
+                                <option value="{{ $pkg->id }}"
+                                    {{ request('package_id') == $pkg->id ? 'selected' : '' }}>{{ $pkg->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">From</label>
+                        <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">To</label>
+                        <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="{{ route('branch-admin.packages.history') }}"
+                                class="btn btn-outline-secondary ms-1">Reset</a>
+                        </div>
+                    </div>
+                </form>
+
                 @if ($orders->isEmpty())
                     <div class="text-center py-5">
                         <i class="bi bi-inbox display-1 text-muted"></i>
@@ -26,7 +57,7 @@
                                     <th>Price</th>
                                     <th>Status</th>
                                     <th>Requested</th>
-                                    <th>Approved By</th>
+                                    <th>Updated By</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,7 +76,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $order->created_at->format('d M, Y') }}</td>
-                                        <td>{{ $order->approved_by ? App\Models\User::find($order->approved_by)->name : '-' }}
+                                        <td>{{ $order->updated_by ? App\Models\User::find($order->updated_by)->name : '-' }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -56,7 +87,7 @@
             </div>
             @if ($orders->hasPages())
                 <div class="card-footer bg-white border-top">
-                    {{ $orders->links() }}
+                    {{ $orders->appends(request()->query())->links() }}
                 </div>
             @endif
         </div>

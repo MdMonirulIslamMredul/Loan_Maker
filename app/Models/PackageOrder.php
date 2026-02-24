@@ -15,8 +15,14 @@ class PackageOrder extends Model
         'price',
         'number_of_leads',
         'status',
-        'approved_by',
+        'updated_by',
         'approved_at',
+        'payment_method',
+        'txn_number',
+        'bank_name',
+        'account_no',
+        'phone',
+        'screenshot',
     ];
 
     public function user()

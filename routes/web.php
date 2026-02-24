@@ -116,6 +116,7 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
     // Package Orders / Approvals
     Route::get('/package-orders', [PackageOrderController::class, 'index'])->name('super-admin.package-orders.index');
     Route::post('/package-orders/{order}/approve', [PackageOrderController::class, 'approve'])->name('super-admin.package-orders.approve');
+    Route::post('/package-orders/{order}/reject', [PackageOrderController::class, 'reject'])->name('super-admin.package-orders.reject');
 
     // Logo Settings
     Route::get('/logo-settings', [LogoSettingController::class, 'index'])->name('super-admin.logo-settings.index');
@@ -195,6 +196,7 @@ Route::middleware(['auth', 'bank.admin'])->prefix('bank-admin')->group(function 
 // Officer / Branch Admin package gallery & purchase
 Route::middleware(['auth', 'branch.admin'])->prefix('branch-admin')->group(function () {
     Route::get('/packages', [OfficerPurchaseController::class, 'gallery'])->name('branch-admin.packages.gallery');
+    Route::get('/packages/{leadPackage}/purchase', [OfficerPurchaseController::class, 'showPurchaseForm'])->name('branch-admin.packages.purchase.form');
     Route::post('/packages/{leadPackage}/purchase', [OfficerPurchaseController::class, 'purchase'])->name('branch-admin.packages.purchase');
 
     // Unlock lead for a specific application

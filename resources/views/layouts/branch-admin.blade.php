@@ -148,7 +148,7 @@
 
             <div class="menu-section-title">Packages</div>
             <a href="{{ route('branch-admin.packages.gallery') }}"
-                class="menu-item {{ request()->routeIs('branch-admin.packages.*') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('branch-admin.packages.gallery') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i>
                 <span>Lead Packages</span>
             </a>

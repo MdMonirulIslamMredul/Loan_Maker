@@ -11,7 +11,7 @@
         @if ($bannerLoans->count() > 0)
             <!-- Banner Slider -->
             <div class="position-relative">
-                <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 500px;">
+                <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 550px;">
                     <div class="carousel-inner h-100">
                         @foreach ($bannerLoans as $index => $loan)
                             <div class="carousel-item h-100 {{ $index === 0 ? 'active' : '' }}"
@@ -20,6 +20,8 @@
                                     <div class="row h-100 align-items-center">
                                         <div class="col-lg-8">
                                             <span class="badge bg-info mb-3">{{ $loan->branch->bank->name }}</span>
+                                            <small class="text-white-50 d-block mb-2">{{ $loan->branch->name }}
+                                                Branch</small>
                                             <h1 class="display-3 fw-bold mb-4">{{ $loan->name }}</h1>
                                             <p class="lead mb-4">{{ Str::limit($loan->description, 100) }}</p>
                                             <div class="d-flex flex-wrap gap-3 mb-4">
@@ -57,7 +59,8 @@
 
                         <div class="carousel-indicators">
                             @foreach ($bannerLoans as $index => $loan)
-                                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ $index }}"
+                                <button type="button" data-bs-target="#heroCarousel"
+                                    data-bs-slide-to="{{ $index }}"
                                     class="{{ $index === 0 ? 'active' : '' }}"></button>
                             @endforeach
                         </div>
@@ -119,6 +122,9 @@
     </div>
 
 
+
+
+
     <!-- Featured Loans Section -->
     @if ($featuredLoans->count() > 0)
         <section id="loans" class="py-5 bg-light">
@@ -138,7 +144,8 @@
                                         <div class="col-lg-4">
                                             <div class="card h-100 shadow-sm border-0 hover-lift">
                                                 @if ($loan->banner)
-                                                    <div class="position-relative" style="height: 200px; overflow: hidden;">
+                                                    <div class="position-relative"
+                                                        style="height: 200px; overflow: hidden;">
                                                         <img src="{{ asset($loan->banner) }}"
                                                             class="card-img-top h-100 object-fit-cover"
                                                             alt="{{ $loan->name }}">
@@ -159,6 +166,8 @@
                                                             @endif
                                                             <small
                                                                 class="text-muted">{{ $loan->branch->bank->name }}</small>
+                                                            <small class="text-muted">, {{ $loan->branch->name }}
+                                                                Branch</small>
                                                         </div>
                                                     @endif
 

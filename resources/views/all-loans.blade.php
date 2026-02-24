@@ -121,7 +121,8 @@
                                                     alt="{{ $loan->branch->bank->name }}"
                                                     style="width: 40px; height: 40px; object-fit: contain;" class="me-2">
                                             @endif
-                                            <small class="text-muted">{{ $loan->branch->bank->name }}</small>
+                                            <small class="text-muted">{{ $loan->branch->bank->name }} </small>
+                                            <small class="text-muted">, {{ $loan->branch->name }} Branch</small>
                                         </div>
                                     @endif
 

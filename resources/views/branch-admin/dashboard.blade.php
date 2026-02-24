@@ -56,7 +56,80 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            @php
+                $user = auth()->user();
+                $leadBalance = $user->lead_balance ?? 0;
+                $branchId = $user->branch_id;
+                $userId = $user->id;
+
+                $appIds = \App\Models\LoanApplication::whereHas('loan', function ($q) use ($branchId, $userId) {
+                    $q->where('branch_id', $branchId)->where('branch_admin_id', $userId);
+                })
+                    ->pluck('id')
+                    ->toArray();
+
+                $totalApplications = count($appIds);
+                $unlockedCount = 0;
+                if (!empty($appIds)) {
+                    $unlockedCount = \App\Models\LeadAccess::where('officer_id', $userId)
+                        ->whereIn('application_id', $appIds)
+                        ->count();
+                }
+                $lockedCount = max(0, $totalApplications - $unlockedCount);
+            @endphp
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card h-100 bg-white border-0">
+                        <div class="card-body text-center p-3">
+                            <div class="text-muted small">Lead Balance</div>
+                            <div class="fw-bold fs-5">{{ number_format($leadBalance) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="{{ route('branch-admin.applications.index', ['access' => 'unlocked']) }}"
+                        class="text-decoration-none">
+                        <div class="card h-100 bg-light border-0">
+                            <div class="card-body text-center p-3">
+                                <div class="text-muted small">Available (Unlocked)</div>
+                                <div class="fw-bold fs-5 text-success">{{ $unlockedCount }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="{{ route('branch-admin.applications.index', ['access' => 'locked']) }}"
+                        class="text-decoration-none">
+                        <div class="card h-100 bg-light border-0">
+                            <div class="card-body text-center p-3">
+                                <div class="text-muted small">New (Locked)</div>
+                                <div class="fw-bold fs-5 text-warning">{{ $lockedCount }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="{{ route('branch-admin.applications.index') }}" class="text-decoration-none">
+                        <div class="card h-100 bg-white border-0">
+                            <div class="card-body text-center p-3">
+                                <div class="text-muted small">Total Applications</div>
+                                <div class="fw-bold fs-5">{{ $totalApplications }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-bottom">
             <h4 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h4>
         </div>
@@ -94,7 +167,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Loan Applications Section -->
     <div class="card border-0 shadow-sm mt-4">
