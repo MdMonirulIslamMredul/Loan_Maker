@@ -4,7 +4,7 @@
 @section('dashboard-title', 'Super Admin Dashboard')
 
 @section('content')
-    <div class="row g-4 mb-4">
+    {{-- <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-4">
             <a href="{{ route('super-admin.banks.create') }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm h-100 hover-lift">
@@ -184,6 +184,102 @@
                 </div>
             </a>
         </div>
+    </div> --}}
+
+    <div class="row g-3 mb-4">
+        @php
+            $banksCount = \App\Models\Bank::count();
+            $branchesCount = \App\Models\Branch::count();
+            $officersCount = \App\Models\User::where('role', 'branch_admin')->count();
+            $loansCount = \App\Models\Loan::count();
+            $applicationsCount = \App\Models\LoanApplication::count();
+            $packagesCount = \App\Models\LeadPackage::count();
+            $pendingOrdersCount = \App\Models\PackageOrder::where('status', 'pending')->count();
+        @endphp
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.banks.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-building text-primary count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $banksCount }}</div>
+                    </div>
+                    <div class="text-muted small">Banks</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.branches.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-shop text-warning count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $branchesCount }}</div>
+                    </div>
+                    <div class="text-muted small">Branches</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.branch-admins.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-person-badge text-info count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $officersCount }}</div>
+                    </div>
+                    <div class="text-muted small">Officers</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.loans.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-cash-coin text-danger count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $loansCount }}</div>
+                    </div>
+                    <div class="text-muted small">Loans</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.applications.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-file-text text-cyan count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $applicationsCount }}</div>
+                    </div>
+                    <div class="text-muted small">Applications</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.lead-packages.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-box-seam text-purple count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $packagesCount }}</div>
+                    </div>
+                    <div class="text-muted small">Packages</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.package-orders.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-card-checklist text-secondary count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $pendingOrdersCount }}</div>
+                    </div>
+                    <div class="text-muted small">Orders Pending</div>
+                </div>
+            </a>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -242,8 +338,153 @@
         </div>
     </div>
 
+    <!-- Package Orders by Officers Overview -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-people me-2"></i>Top Officers by Purchased Leads</h5>
+            <a href="{{ route('super-admin.package-orders.officer-purchases') }}"
+                class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body p-3">
+            @php
+                $topOfficers = \App\Models\User::where('role', 'branch_admin')
+                    ->whereHas('packageOrders', function ($q) {
+                        $q->where('status', 'approved');
+                    })
+                    ->withCount([
+                        'packageOrders as orders_count' => function ($q) {
+                            $q->where('status', 'approved');
+                        },
+                    ])
+                    ->withSum(
+                        [
+                            'packageOrders as total_leads' => function ($q) {
+                                $q->where('status', 'approved');
+                            },
+                        ],
+                        'number_of_leads',
+                    )
+                    ->withSum(
+                        [
+                            'packageOrders as total_spent' => function ($q) {
+                                $q->where('status', 'approved');
+                            },
+                        ],
+                        'price',
+                    )
+                    ->orderByDesc('total_leads')
+                    ->take(5)
+                    ->get();
+            @endphp
+
+            @if ($topOfficers->isEmpty())
+                <div class="text-center text-muted py-3">No officer purchases yet.</div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Officer</th>
+                                <th>Orders</th>
+                                <th>Leads</th>
+                                <th>Spent</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($topOfficers as $off)
+                                <tr>
+                                    <td>{{ $off->name }}</td>
+                                    <td>{{ $off->orders_count ?? 0 }}</td>
+                                    <td>{{ $off->total_leads ?? 0 }}</td>
+                                    <td>৳{{ number_format($off->total_spent ?? 0, 2) }}</td>
+                                    <td class="text-end">
+                                        <a href="{{ route('super-admin.package-orders.index', ['officer_id' => $off->id]) }}"
+                                            class="btn btn-sm btn-outline-secondary">View Orders</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Customer Messages Overview -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+            @php $unreadCount = \App\Models\CustomerMessage::where('is_read', 0)->count(); @endphp
+            <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Customer Messages
+                @if ($unreadCount)
+                    <span class="badge bg-danger ms-2">{{ $unreadCount }}</span>
+                @endif
+            </h5>
+            <a href="{{ route('super-admin.customer-messages.index') }}" class="btn btn-sm btn-outline-primary">View
+                All</a>
+        </div>
+        <div class="card-body p-3">
+            @php
+                $recentMessages = \App\Models\CustomerMessage::orderBy('created_at', 'desc')->take(5)->get();
+            @endphp
+
+            @if ($recentMessages->isEmpty())
+                <div class="text-center text-muted py-3">No messages yet.</div>
+            @else
+                <div class="list-group list-group-flush">
+                    @foreach ($recentMessages as $msg)
+                        <a href="{{ route('super-admin.customer-messages.show', $msg->id) }}"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                            <div class="me-3">
+                                <div class="fw-semibold">{{ $msg->first_name }} {{ $msg->last_name }}</div>
+                                <div class="text-muted small">{{ \Illuminate\Support\Str::limit($msg->message, 80) }}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="small text-muted">
+                                    {{ $msg->created_at ? $msg->created_at->format('d M, Y') : '' }}</div>
+                                @if (!$msg->is_read)
+                                    <span class="badge bg-danger mt-2">New</span>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+
     @push('styles')
         <style>
+            .dashboard-count-card {
+                border-radius: 0.75rem;
+                background: linear-gradient(135deg, rgba(13, 110, 253, 0.06), rgba(102, 16, 242, 0.04));
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+                min-height: 92px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: .25rem;
+            }
+
+            .dashboard-count-card .count-icon {
+                font-size: 1.35rem;
+                line-height: 1;
+                display: inline-block;
+                opacity: 0.95;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            }
+
+            .dashboard-count-card .fs-4 {
+                font-size: 1.25rem;
+            }
+
+            .dashboard-count-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 0.75rem 1.5rem rgba(13, 110, 253, 0.08);
+            }
+
             .hover-lift {
                 transition: transform 0.2s, box-shadow 0.2s;
             }

@@ -12,6 +12,23 @@
         </a>
     </div>
 
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="GET" action="{{ route('super-admin.lead-packages.index') }}" class="d-flex">
+                <select name="type" id="type" class="form-select me-2" onchange="this.form.submit()">
+                    <option value="">All types</option>
+                    <option value="regular" {{ request('type') === 'regular' ? 'selected' : '' }}>Regular</option>
+                    <option value="gift" {{ request('type') === 'gift' ? 'selected' : '' }}>Gift</option>
+                    <option value="premium" {{ request('type') === 'premium' ? 'selected' : '' }}>Premium</option>
+                </select>
+                <button type="submit" class="btn btn-outline-secondary">Filter</button>
+                @if (request()->filled('type'))
+                    <a href="{{ route('super-admin.lead-packages.index') }}" class="btn btn-link ms-2">Reset</a>
+                @endif
+            </form>
+        </div>
+    </div>
+
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
@@ -32,6 +49,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="py-3">Name</th>
+                                <th class="py-3">Type</th>
                                 <th class="py-3">Price</th>
                                 <th class="py-3">Leads</th>
                                 <th class="py-3">Duration (days)</th>
@@ -45,6 +63,14 @@
                                     <td>
                                         <strong>{{ $package->name }}</strong>
                                     </td>
+
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ $package->type === 'gift' ? 'success' : ($package->type === 'premium' ? 'warning' : 'secondary') }}">
+                                            {{ ucfirst($package->type) }}
+                                        </span>
+                                    </td>
+
                                     <td>
                                         {{ number_format($package->price, 2) }}
                                     </td>

@@ -10,7 +10,7 @@ class OfficerPurchaseController extends Controller
 {
     public function gallery()
     {
-        $packages = LeadPackage::orderBy('price')->get();
+        $packages = LeadPackage::whereIn('type', ['regular', 'premium'])->orderBy('price')->get();
 
         return view('branch-admin.packages.gallery', compact('packages'));
     }
@@ -91,7 +91,7 @@ class OfficerPurchaseController extends Controller
             $query->whereDate('created_at', '<=', $request->to_date);
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->paginate(15);
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
         $packages = LeadPackage::orderBy('name')->get();
 

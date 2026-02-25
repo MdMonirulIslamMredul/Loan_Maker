@@ -11,6 +11,7 @@ class LeadPackage extends Model
 
     protected $fillable = [
         'name',
+        'type',
         'price',
         'number_of_leads',
         'duration',

@@ -9,9 +9,18 @@ class LeadPackageController extends Controller
 {
     public function index()
     {
-        $packages = LeadPackage::orderBy('created_at', 'desc')->paginate(10);
+        $allowedTypes = ['regular', 'gift', 'premium'];
 
-        return view('super-admin.lead-packages.index', compact('packages'));
+        $query = LeadPackage::query();
+
+        $type = request()->query('type');
+        if ($type && in_array($type, $allowedTypes, true)) {
+            $query->where('type', $type);
+        }
+
+        $packages = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('super-admin.lead-packages.index', compact('packages', 'type'));
     }
 
     public function create()
@@ -23,6 +32,7 @@ class LeadPackageController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'type' => 'required|in:regular,gift,premium',
             'price' => 'required|numeric|min:0',
             'number_of_leads' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',
@@ -44,6 +54,7 @@ class LeadPackageController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'type' => 'required|in:regular,gift,premium',
             'price' => 'required|numeric|min:0',
             'number_of_leads' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',

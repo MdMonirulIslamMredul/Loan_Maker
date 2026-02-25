@@ -37,6 +37,21 @@
 </div>
 
 <div class="mb-3">
+    <label for="type" class="form-label fw-semibold">Package Type</label>
+    <select name="type" id="type" class="form-select" required>
+        @php
+            $selectedType = old('type', $leadPackage->type ?? 'regular');
+        @endphp
+        <option value="regular" {{ $selectedType === 'regular' ? 'selected' : '' }}>Regular</option>
+        <option value="gift" {{ $selectedType === 'gift' ? 'selected' : '' }}>Gift</option>
+        <option value="premium" {{ $selectedType === 'premium' ? 'selected' : '' }}>Premium</option>
+    </select>
+    @error('type')
+        <div class="text-danger small mt-1">{{ $message }}</div>
+    @enderror
+</div>
+
+<div class="mb-3">
     <label for="description" class="form-label fw-semibold">Description</label>
     <textarea name="description" id="description" rows="4" class="form-control">{{ old('description', $leadPackage->description ?? '') }}</textarea>
     @error('description')

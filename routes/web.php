@@ -115,8 +115,13 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
 
     // Package Orders / Approvals
     Route::get('/package-orders', [PackageOrderController::class, 'index'])->name('super-admin.package-orders.index');
+    Route::get('/officer-purchases', [PackageOrderController::class, 'officerPurchases'])->name('super-admin.package-orders.officer-purchases');
     Route::post('/package-orders/{order}/approve', [PackageOrderController::class, 'approve'])->name('super-admin.package-orders.approve');
     Route::post('/package-orders/{order}/reject', [PackageOrderController::class, 'reject'])->name('super-admin.package-orders.reject');
+
+    // Gift packages for a specific officer (super-admin)
+    Route::get('/officer-purchases/{user}/gift-packages', [PackageOrderController::class, 'showGiftPackages'])->name('super-admin.package-orders.gift.show');
+    Route::post('/officer-purchases/{user}/gift-packages', [PackageOrderController::class, 'assignGift'])->name('super-admin.package-orders.gift.assign');
 
     // Logo Settings
     Route::get('/logo-settings', [LogoSettingController::class, 'index'])->name('super-admin.logo-settings.index');

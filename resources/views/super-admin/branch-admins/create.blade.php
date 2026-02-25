@@ -28,6 +28,14 @@
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label fw-semibold">Phone</label>
+                    <input type="text" name="phone" id="phone" value="{{ old('phone') }}" class="form-control"
+                        required>
+                    @error('phone')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
 
                 <div class="row gx-3">
                     <div class="mb-3 col-md-6">
@@ -47,7 +55,8 @@
                         <select name="branch_id" id="branch_id" class="form-select" required>
                             <option value="">Select a branch</option>
                             @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}" {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                <option value="{{ $branch->id }}"
+                                    {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
                                     {{ $branch->name }} ({{ $branch->bank->name }})
                                 </option>
                             @endforeach

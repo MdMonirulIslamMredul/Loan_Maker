@@ -78,6 +78,7 @@ class SuperAdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
+            'phone' => 'required|string|max:20',
             'password' => 'required|string|min:6|confirmed',
             'bank_id' => 'required|exists:banks,id',
         ]);
@@ -85,6 +86,7 @@ class SuperAdminController extends Controller
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'role' => 'bank_admin',
             'bank_id' => $validated['bank_id'],
@@ -119,15 +121,17 @@ class SuperAdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'required|string|max:20',
             'password' => 'nullable|string|min:6|confirmed',
             'bank_id' => 'required|exists:banks,id',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable',
         ]);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
+        $user->phone = $validated['phone'];
         $user->bank_id = $validated['bank_id'];
-        $user->is_active = $request->has('is_active');
+        $user->is_active = $request->boolean('is_active');
 
         // Only update password if provided
         if (!empty($validated['password'])) {
@@ -168,7 +172,7 @@ class SuperAdminController extends Controller
             'details' => 'nullable|string',
             'logo' => 'nullable|image|max:2048',
             'banner' => 'nullable|image|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -294,6 +298,7 @@ class SuperAdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
+            'phone' => 'required|string|max:20',
             'password' => 'required|string|min:6|confirmed',
             'branch_id' => 'required|exists:branches,id',
         ]);
@@ -304,6 +309,7 @@ class SuperAdminController extends Controller
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'role' => 'branch_admin',
             'bank_id' => $branch->bank_id,
@@ -340,9 +346,10 @@ class SuperAdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'required|string|max:20',
             'password' => 'nullable|string|min:6|confirmed',
             'branch_id' => 'required|exists:branches,id',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable',
         ]);
 
         // Get the bank_id from the selected branch
@@ -350,9 +357,10 @@ class SuperAdminController extends Controller
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
+        $user->phone = $validated['phone'];
         $user->branch_id = $validated['branch_id'];
         $user->bank_id = $branch->bank_id;
-        $user->is_active = $request->has('is_active');
+        $user->is_active = $request->boolean('is_active');
 
         // Only update password if provided
         if (!empty($validated['password'])) {
