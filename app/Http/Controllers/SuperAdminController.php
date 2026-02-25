@@ -427,6 +427,36 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Show change password form for super-admin.
+     */
+    public function editPassword()
+    {
+        return view('super-admin.change-password');
+    }
+
+    /**
+     * Update password for authenticated super-admin.
+     */
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = auth()->user();
+
+        if (! \Illuminate\Support\Facades\Hash::check($validated['current_password'], $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $user->password = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        $user->save();
+
+        return redirect()->route('super-admin.dashboard')->with('success', 'Password updated successfully.');
+    }
+
+    /**
      * Store a newly created loan in storage.
      */
     public function storeLoan(Request $request)

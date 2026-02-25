@@ -142,6 +142,9 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->group(functio
     Route::get('/customer-messages', [SuperAdminController::class, 'customerMessages'])->name('super-admin.customer-messages.index');
     Route::get('/customer-messages/{message}', [SuperAdminController::class, 'showCustomerMessage'])->name('super-admin.customer-messages.show');
     Route::post('/customer-messages/{message}/mark-read', [SuperAdminController::class, 'markMessageRead'])->name('super-admin.customer-messages.markRead');
+    // Super-admin profile/password
+    Route::get('/profile/password', [SuperAdminController::class, 'editPassword'])->name('super-admin.profile.password.edit');
+    Route::put('/profile/password', [SuperAdminController::class, 'updatePassword'])->name('super-admin.profile.password');
 });
 
 // Bank Admin Routes
@@ -225,6 +228,12 @@ Route::middleware(['auth', 'branch.admin'])->prefix('branch-admin')->group(funct
     Route::get('/applications', [LoanApplicationController::class, 'branchApplications'])->name('branch-admin.applications.index');
     Route::get('/applications/{application}', [LoanApplicationController::class, 'branch_show'])->name('branch-admin.applications.show');
     Route::post('/applications/{application}/status', [LoanApplicationController::class, 'updateStatus'])->name('branch-admin.applications.updateStatus');
+    // Branch admin profile & password
+    Route::get('/profile', [App\Http\Controllers\BranchAdminController::class, 'profile'])->name('branch-admin.profile');
+    Route::get('/profile/edit', [App\Http\Controllers\BranchAdminController::class, 'editProfile'])->name('branch-admin.profile.edit');
+    Route::put('/profile', [App\Http\Controllers\BranchAdminController::class, 'updateProfile'])->name('branch-admin.profile.update');
+    Route::get('/profile/password', [App\Http\Controllers\BranchAdminController::class, 'editPassword'])->name('branch-admin.profile.password.edit');
+    Route::put('/profile/password', [App\Http\Controllers\BranchAdminController::class, 'updatePassword'])->name('branch-admin.profile.password');
 });
 
 // Customer Routes

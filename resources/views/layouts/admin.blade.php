@@ -369,13 +369,35 @@
                     <h5 class="mb-0">@yield('dashboard-title', 'Dashboard')</h5>
                 </div>
                 <div class="d-flex align-items-center">
-                    <span class="text-dark me-3 d-none d-md-inline">{{ auth()->user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-box-arrow-right me-1"></i>Logout
-                        </button>
-                    </form>
+                    <div class="dropdown">
+                        <a class="btn btn-light dropdown-toggle d-flex align-items-center" href="#"
+                            role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ Route::has('super-admin.profile.edit') ? route('super-admin.profile.edit') : '#' }}">My
+                                    Profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ Route::has('super-admin.profile.password.edit') ? route('super-admin.profile.password.edit') : '#' }}">Change
+                                    Password</a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>

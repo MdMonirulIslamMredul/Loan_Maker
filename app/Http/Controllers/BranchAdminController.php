@@ -6,6 +6,7 @@ use App\Models\Loan;
 use App\Models\LoanCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class BranchAdminController extends Controller
 {
@@ -28,6 +29,76 @@ class BranchAdminController extends Controller
             ->paginate(5);
 
         return view('branch-admin.dashboard', compact('branch', 'bank', 'applications'));
+    }
+
+    /**
+     * Show branch-admin profile.
+     */
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('branch-admin.profile', compact('user'));
+    }
+
+    /**
+     * Show edit profile form.
+     */
+    public function editProfile()
+    {
+        $user = Auth::user();
+        $branches = \App\Models\Branch::where('is_active', true)->get();
+        return view('branch-admin.edit-profile', compact('user', 'branches'));
+    }
+
+    /**
+     * Update branch-admin profile.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'] ?? $user->phone;
+        $user->save();
+
+        return redirect()->route('branch-admin.profile')->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Show change password form for branch-admin.
+     */
+    public function editPassword()
+    {
+        return view('branch-admin.change-password');
+    }
+
+    /**
+     * Update password for authenticated branch-admin.
+     */
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (! Hash::check($validated['current_password'], $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return redirect()->route('branch-admin.dashboard')->with('success', 'Password updated successfully.');
     }
 
     /**

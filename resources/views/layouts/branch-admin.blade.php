@@ -172,13 +172,32 @@
                     <h5 class="mb-0">@yield('dashboard-title', 'Dashboard')</h5>
                 </div>
                 <div class="d-flex align-items-center">
-                    <span class="text-dark me-3 d-none d-md-inline">{{ auth()->user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-box-arrow-right me-1"></i>Logout
-                        </button>
-                    </form>
+
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none" id="userMenuLink"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-2"></i>
+                            <span class="d-none d-sm-inline">{{ auth()->user()->name }}</span>
+                            <i class="bi bi-chevron-down ms-2 d-none d-sm-inline"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuLink">
+                            <li><a class="dropdown-item" href="{{ route('branch-admin.profile') }}"><i
+                                        class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route('branch-admin.profile.password.edit') }}"><i
+                                        class="bi bi-shield-lock me-2"></i>Change Password</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item"><i
+                                            class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </nav>
