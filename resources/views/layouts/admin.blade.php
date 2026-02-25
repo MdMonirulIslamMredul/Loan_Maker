@@ -152,7 +152,6 @@
         </div>
 
         <div class="sidebar-menu">
-            <div class="menu-section-title">Main</div>
             <a href="{{ route('super-admin.dashboard') }}"
                 class="menu-item {{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i>
