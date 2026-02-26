@@ -11,7 +11,7 @@
                     <i class="bi bi-person-badge fs-2 text-success"></i>
                 </div>
                 <div>
-                    <h2 class="mb-1 fw-bold">Edit Branch Admin</h2>
+                    <h2 class="mb-1 fw-bold">Edit Branch Admin / Officer </h2>
                     <p class="mb-0 text-muted">Update branch administrator details</p>
                 </div>
             </div>

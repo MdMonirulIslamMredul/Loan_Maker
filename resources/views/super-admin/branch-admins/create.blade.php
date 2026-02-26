@@ -6,7 +6,7 @@
 @section('content')
     <div class="card border-0 shadow-sm" style="max-width: 800px; margin: 0 auto;">
         <div class="card-body">
-            <h2 class="mb-4 fw-bold">Create New Branch Admin</h2>
+            <h2 class="mb-4 fw-bold">Create New Branch Admin / Officer</h2>
 
             <form method="POST" action="{{ route('super-admin.branch-admins.store') }}">
                 @csrf
@@ -86,7 +86,7 @@
                         <i class="bi bi-x-circle me-1"></i>Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle me-1"></i>Create Branch Admin
+                        <i class="bi bi-check-circle me-1"></i>Create Branch Admin / Officer
                     </button>
                 </div>
             </form>

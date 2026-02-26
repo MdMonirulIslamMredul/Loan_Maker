@@ -16,12 +16,12 @@
                                     <i class="bi bi-person-plus fs-2 text-info"></i>
                                 </div>
                                 <div>
-                                    <h2 class="mb-1 fw-bold text-dark">Branch Admins</h2>
-                                    <p class="mb-0 text-muted">Manage all branch administrators</p>
+                                    <h2 class="mb-1 fw-bold text-dark">Branch Admins / Officers</h2>
+                                    <p class="mb-0 text-muted">Manage all branch administrators and officers</p>
                                 </div>
                             </div>
                             <a href="{{ route('super-admin.branch-admins.create') }}" class="btn btn-info">
-                                <i class="bi bi-plus-circle me-2"></i>Create Branch Admin
+                                <i class="bi bi-plus-circle me-2"></i>Create Branch Admin / Officer
                             </a>
                         </div>
                     </div>

@@ -225,12 +225,12 @@
                 <a href="{{ route('super-admin.branch-admins.create') }}"
                     class="menu-item {{ request()->routeIs('super-admin.branch-admins.create') ? 'active' : '' }}">
                     <i class="bi bi-person-plus"></i>
-                    <span>Create Branch Admin</span>
+                    <span>Create Branch Officer</span>
                 </a>
                 <a href="{{ route('super-admin.branch-admins.index') }}"
                     class="menu-item {{ request()->routeIs('super-admin.branch-admins.index') ? 'active' : '' }}">
                     <i class="bi bi-people-fill"></i>
-                    <span>View Branch Admins</span>
+                    <span>View Branch Officers</span>
                 </a>
             </div>
 
@@ -316,6 +316,13 @@
             </a>
 
             <div class="menu-section-title">Customer Applications</div>
+
+            <a href="{{ route('super-admin.customers.index') }}"
+                class="menu-item {{ request()->routeIs('super-admin.customers.index') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i>
+                <span>Customer List</span>
+            </a>
+
             <a href="{{ route('super-admin.applications.index') }}"
                 class="menu-item {{ request()->routeIs('super-admin.applications.index') ? 'active' : '' }}">
                 <i class="bi bi-file-text"></i>

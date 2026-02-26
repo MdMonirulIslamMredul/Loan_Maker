@@ -195,6 +195,7 @@
             $applicationsCount = \App\Models\LoanApplication::count();
             $packagesCount = \App\Models\LeadPackage::count();
             $pendingOrdersCount = \App\Models\PackageOrder::where('status', 'pending')->count();
+            $customersCount = \App\Models\User::where('role', 'customer')->count();
         @endphp
 
         <div class="col-6 col-md-4 col-lg-2">
@@ -245,17 +246,7 @@
             </a>
         </div>
 
-        <div class="col-6 col-md-4 col-lg-2">
-            <a href="{{ route('super-admin.applications.index') }}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <i class="bi bi-file-text text-cyan count-icon"></i>
-                        <div class="fs-4 fw-bold">{{ $applicationsCount }}</div>
-                    </div>
-                    <div class="text-muted small">Applications</div>
-                </div>
-            </a>
-        </div>
+
 
         <div class="col-6 col-md-4 col-lg-2">
             <a href="{{ route('super-admin.lead-packages.index') }}" class="text-decoration-none">
@@ -280,7 +271,35 @@
                 </div>
             </a>
         </div>
+
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.customers.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-people-fill text-green count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $customersCount }}</div>
+                    </div>
+                    <div class="text-muted small">Customers</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{{ route('super-admin.applications.index') }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center p-3 dashboard-count-card">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-file-text text-cyan count-icon"></i>
+                        <div class="fs-4 fw-bold">{{ $applicationsCount }}</div>
+                    </div>
+                    <div class="text-muted small">Applications</div>
+                </div>
+            </a>
+        </div>
+
     </div>
+
+
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-bottom">

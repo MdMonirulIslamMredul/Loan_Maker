@@ -113,7 +113,7 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Branch Admin</h5>
+            <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Branch Officer</h5>
             <small class="opacity-75">{{ auth()->user()->name }}</small>
         </div>
 

@@ -393,6 +393,33 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Display a listing of customers.
+     */
+    public function listCustomers()
+    {
+        $customers = User::where('role', 'customer')->orderBy('created_at', 'desc')->paginate(15);
+        return view('super-admin.customers.index', compact('customers'));
+    }
+
+    /**
+     * Reset a customer's password to a default value.
+     */
+    public function resetCustomerPassword(User $user)
+    {
+        // ensure we're resetting a customer
+        if ($user->role !== 'customer') {
+            return back()->withErrors(['error' => 'Only customer accounts can have passwords reset here.']);
+        }
+
+        $default = '12345678';
+        $user->password = \Illuminate\Support\Facades\Hash::make($default);
+        $user->save();
+
+        return back()->with('success', 'Customer password has been reset to the default.');
+    }
+
+
+    /**
      * Display customer messages for admin.
      */
     public function customerMessages()
